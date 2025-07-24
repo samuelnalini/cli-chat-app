@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/samuel/Projects/chat-app/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

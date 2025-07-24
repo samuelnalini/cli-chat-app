@@ -1,0 +1,4 @@
+/home/samuel/Projects/chat-app/build/CMakeFiles/server.dir
+/home/samuel/Projects/chat-app/build/CMakeFiles/client.dir
+/home/samuel/Projects/chat-app/build/CMakeFiles/edit_cache.dir
+/home/samuel/Projects/chat-app/build/CMakeFiles/rebuild_cache.dir

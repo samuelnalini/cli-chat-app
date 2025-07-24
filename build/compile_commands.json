@@ -1,0 +1,38 @@
+[
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/server.dir/server/src/main.cpp.o -c /home/samuel/Projects/chat-app/server/src/main.cpp",
+  "file": "/home/samuel/Projects/chat-app/server/src/main.cpp",
+  "output": "CMakeFiles/server.dir/server/src/main.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/server.dir/server/src/server.cpp.o -c /home/samuel/Projects/chat-app/server/src/server.cpp",
+  "file": "/home/samuel/Projects/chat-app/server/src/server.cpp",
+  "output": "CMakeFiles/server.dir/server/src/server.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/server.dir/common/common.cpp.o -c /home/samuel/Projects/chat-app/common/common.cpp",
+  "file": "/home/samuel/Projects/chat-app/common/common.cpp",
+  "output": "CMakeFiles/server.dir/common/common.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/client.dir/client/src/main.cpp.o -c /home/samuel/Projects/chat-app/client/src/main.cpp",
+  "file": "/home/samuel/Projects/chat-app/client/src/main.cpp",
+  "output": "CMakeFiles/client.dir/client/src/main.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/client.dir/client/src/client.cpp.o -c /home/samuel/Projects/chat-app/client/src/client.cpp",
+  "file": "/home/samuel/Projects/chat-app/client/src/client.cpp",
+  "output": "CMakeFiles/client.dir/client/src/client.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/client.dir/common/common.cpp.o -c /home/samuel/Projects/chat-app/common/common.cpp",
+  "file": "/home/samuel/Projects/chat-app/common/common.cpp",
+  "output": "CMakeFiles/client.dir/common/common.cpp.o"
+}
+]
