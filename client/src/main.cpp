@@ -1,7 +1,25 @@
 #include "headers/client.hpp"
 
-int main()
+#include <string>
+#include <iostream>
+
+int main(int argc, char* argv[])
 {
-    Client client;
-    client.Start();
+
+    if (argc < 3)
+    {
+        Client client;
+        client.Start();
+    } else
+    {
+
+        if (!std::stoi(argv[2]))
+        {
+            std::cerr << "Usage: client <ip> <port>";
+            return 1;
+        }
+
+        Client client(argv[1], std::stoi(argv[2]));
+        client.Start();
+    }
 }

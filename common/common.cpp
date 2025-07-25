@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <iostream> 
 
 bool sendMessage(int fd, const std::string& msg)
 {
@@ -31,10 +30,10 @@ bool recvMessage(int fd, std::string& out)
 
     outLen = ntohl(outLen);
     
-    if (outLen <= 0)
-    {
-        return false;
-    }
+    //if (outLen <= 0)
+    //{
+    //    return false;
+    //}
 
     // receive the string
 

@@ -221,4 +221,6 @@ CMakeFiles/server.dir/server/src/main.cpp.o: \
  /usr/include/c++/15.1.1/bits/hashtable_policy.h \
  /usr/include/c++/15.1.1/ext/aligned_buffer.h \
  /usr/include/c++/15.1.1/bits/node_handle.h \
- /usr/include/c++/15.1.1/bits/erase_if.h
+ /usr/include/c++/15.1.1/bits/erase_if.h /usr/include/c++/15.1.1/iostream \
+ /usr/include/c++/15.1.1/ostream /usr/include/c++/15.1.1/bits/ostream.tcc \
+ /usr/include/c++/15.1.1/istream /usr/include/c++/15.1.1/bits/istream.tcc

@@ -12,7 +12,7 @@ class Server
 {
 public:
     Server() {}
-    Server(int port, std::string& ip)
+    Server(std::string ip, int port)
         : m_port(port)
         , m_ip(ip)
     {}

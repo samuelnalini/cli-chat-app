@@ -399,6 +399,7 @@ CMakeFiles/server.dir/server/src/main.cpp.o: /home/samuel/Projects/chat-app/serv
   /usr/include/c++/15.1.1/bits/hashtable_policy.h \
   /usr/include/c++/15.1.1/bits/invoke.h \
   /usr/include/c++/15.1.1/bits/ios_base.h \
+  /usr/include/c++/15.1.1/bits/istream.tcc \
   /usr/include/c++/15.1.1/bits/iterator_concepts.h \
   /usr/include/c++/15.1.1/bits/locale_classes.h \
   /usr/include/c++/15.1.1/bits/locale_classes.tcc \
@@ -417,6 +418,7 @@ CMakeFiles/server.dir/server/src/main.cpp.o: /home/samuel/Projects/chat-app/serv
   /usr/include/c++/15.1.1/bits/new_allocator.h \
   /usr/include/c++/15.1.1/bits/node_handle.h \
   /usr/include/c++/15.1.1/bits/ostream.h \
+  /usr/include/c++/15.1.1/bits/ostream.tcc \
   /usr/include/c++/15.1.1/bits/ostream_insert.h \
   /usr/include/c++/15.1.1/bits/parse_numbers.h \
   /usr/include/c++/15.1.1/bits/postypes.h \
@@ -488,11 +490,14 @@ CMakeFiles/server.dir/server/src/main.cpp.o: /home/samuel/Projects/chat-app/serv
   /usr/include/c++/15.1.1/initializer_list \
   /usr/include/c++/15.1.1/ios \
   /usr/include/c++/15.1.1/iosfwd \
+  /usr/include/c++/15.1.1/iostream \
+  /usr/include/c++/15.1.1/istream \
   /usr/include/c++/15.1.1/limits \
   /usr/include/c++/15.1.1/locale \
   /usr/include/c++/15.1.1/new \
   /usr/include/c++/15.1.1/numbers \
   /usr/include/c++/15.1.1/optional \
+  /usr/include/c++/15.1.1/ostream \
   /usr/include/c++/15.1.1/pstl/pstl_config.h \
   /usr/include/c++/15.1.1/ratio \
   /usr/include/c++/15.1.1/semaphore \

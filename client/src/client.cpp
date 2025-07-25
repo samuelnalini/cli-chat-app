@@ -2,6 +2,9 @@
 #include "../../common/common.hpp"
 
 #include <string>
+#include <iostream>
+#include <sys/socket.h>
+#include <unistd.h>
 
 std::string getInput(const char* msg)
 {
@@ -23,7 +26,8 @@ void Client::ListenForBroadcast(std::string username)
             running = false;
             break;
         }
-        
+       
+
         if (receivedMessage == "SERVER::USERNAME_TAKEN")
         {
             std::cout << "Invalid username: Name taken\n";
@@ -37,7 +41,8 @@ void Client::ListenForBroadcast(std::string username)
 }
 
 void Client::ClientLoop()
-{  
+{
+
     std::string username{ getInput("Username: ") };
     const std::string messageInputDisplay{ username + "> " };
 
@@ -46,10 +51,8 @@ void Client::ClientLoop()
         std::cerr << "Invalid username";
         exit(1);
     }
-    
-    if (!sendMessage(m_sock, username))
-        perror("Username error");
-
+   
+    sendMessage(m_sock, username);
     m_threadpool.emplace_back(&Client::ListenForBroadcast, this, username);
 
     while (running)
@@ -101,7 +104,7 @@ void Client::CreateSocket()
 void Client::Start()
 {
     if (running) return;
-    std::cout << "Starting client...\n";
+    std::cout << "Starting client on " << m_ip << ':' << m_port << "...\n";
     running = true;
 
     CreateSocket();

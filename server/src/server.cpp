@@ -19,11 +19,11 @@ void Server::HandleClient(int clientSock)
 {
     std::string message(MAX_MESSAGE_LEN, '\0');
     std::string username(MAX_USERNAME_LEN, '\0');
-    
+   
     if (!recvMessage(clientSock, username))
         perror("Username error");
     
-    if (m_clientpool.contains(username))
+    if (m_clientpool[username])
     {
         sendMessage(clientSock, "SERVER::USERNAME_TAKEN");
         return;
@@ -35,15 +35,15 @@ void Server::HandleClient(int clientSock)
     while (clientSock && running)
     {
         if (!recvMessage(clientSock, message))
-            perror("Message error");
-        
+            continue;
+            
         if (message.length() <= 0)
         {
-            m_clientpool.erase(username);
             std::cout << username << " has disconnected.\n";
+            m_clientpool.erase(username);
             break;
         }
-        //std::cout << username << ": " << message << '\n';
+
         std::string bcMsg{ username + ": " + message };
         BroadcastMessage(bcMsg.data());
     }
@@ -85,7 +85,7 @@ void Server::CreateSocket()
 void Server::Start()
 {
     if (running) return;
-    std::cout << "Starting server...\n";
+    std::cout << "Starting server on " << m_ip << ':' << m_port << "...\n";
     running = true;
     
 

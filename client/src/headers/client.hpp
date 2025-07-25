@@ -1,9 +1,6 @@
 #pragma once
 
-#include <iostream>
 #include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
 #include <string>
 #include <vector>
 #include <thread>
@@ -12,7 +9,7 @@ class Client
 {
 public:
     Client() {};
-    Client(int port, std::string ip)
+    Client(std::string ip, int port)
     : m_port(port)
     , m_ip(ip)
     {}
