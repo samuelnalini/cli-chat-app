@@ -8,45 +8,63 @@
 #include <memory.h>
 #include <string>
 #include <thread>
+#include <cstring>
 
 void Server::BroadcastMessage(const char *msg)
 {
-    for (std::pair<std::string, int> conn : m_clientpool)
-        sendMessage(conn.second, msg);   
+    std::lock_guard<std::mutex> lock(m_clientsMutex);
+    for (const auto& conn : m_clientpool)
+    {
+        if (!sendMessage(conn.second, msg))
+            std::cerr << "Failed to send message to client: " << conn.first << '\n';
+    }   
 }
 
 void Server::HandleClient(int clientSock)
 {
-    std::string message(MAX_MESSAGE_LEN, '\0');
-    std::string username(MAX_USERNAME_LEN, '\0');
+    std::string username;
    
     if (!recvMessage(clientSock, username))
-        perror("Username error");
+        std::cerr << "Failed to receive username from client\n";
     
-    if (m_clientpool[username])
     {
-        sendMessage(clientSock, "SERVER::USERNAME_TAKEN");
-        return;
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
+        if (m_clientpool.find(username) != m_clientpool.end())
+        {
+            sendMessage(clientSock, "SERVER::USERNAME_TAKEN");
+            close(clientSock);
+            return;
+        }
+
+        m_clientpool[username] = clientSock;
     }
 
-    m_clientpool[username] = clientSock;
     std::cout << username << " has connected.\n";
 
-    while (clientSock && running)
+    std::string message;
+    while (running)
     {
+        message.clear();
+
         if (!recvMessage(clientSock, message))
-            continue;
+            break;
             
-        if (message.length() <= 0)
-        {
-            std::cout << username << " has disconnected.\n";
-            m_clientpool.erase(username);
+        if (message.empty())
+        { 
             break;
         }
 
         std::string bcMsg{ username + ": " + message };
-        BroadcastMessage(bcMsg.data());
+        BroadcastMessage(bcMsg.c_str());
     }
+
+    {
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
+        m_clientpool.erase(username);
+    }
+
+    std::cout << username << " has disconnected.\n";
+    close(clientSock);
 }
 
 void Server::ServerLoop()
@@ -55,6 +73,13 @@ void Server::ServerLoop()
     {
 
         int clientSock = accept(m_sock, nullptr, nullptr);
+
+        if (clientSock < 0)
+        {
+            if (running)
+                perror("Accept failed");
+        }
+
         m_threadpool.emplace_back(&Server::HandleClient, this, clientSock);
     }
 
@@ -68,24 +93,46 @@ void Server::CreateSocket()
 {
     m_sock = socket(AF_INET, SOCK_STREAM, 0);
 
+    if (m_sock < 0)
+    {
+        perror("Socket creation failed");
+        exit(1);
+    }
+
+    memset(&server, 0, sizeof server);
     server.sin_family = AF_INET;
     server.sin_port = htons(m_port);
-    inet_pton(AF_INET, m_ip.c_str(), &server.sin_addr);
-    
-    if (bind(m_sock, (struct sockaddr *)&server, sizeof server) > 0)
+
+    if (inet_pton(AF_INET, m_ip.c_str(), &server.sin_addr) <= 0)
+    {
+        std::cerr << "Invalid IP address: " << m_ip << '\n';
+        exit(1);
+    }
+
+    if (bind(m_sock, (struct sockaddr *)&server, sizeof server) < 0)
     {
         perror("Bind failed");
+        close(m_sock);
         exit(1);
     }
  
-    listen(m_sock, 5);
-    std::cout << "Socket created\n";
+
+    if (listen(m_sock, 10) < 0)
+    {
+       perror("Listen failed");
+       close(m_sock);
+       exit(1);
+    }
+
+    std::cout << "Server listening on " << m_ip << ':' << m_port << '\n';
 }
 
 void Server::Start()
 {
-    if (running) return;
-    std::cout << "Starting server on " << m_ip << ':' << m_port << "...\n";
+    if (running)
+        return;
+
+    std::cout << "Starting server...\n";
     running = true;
     
 
