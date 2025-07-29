@@ -190,6 +190,30 @@ client/src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client/src/main.cpp.s
 .PHONY : client/src/main.cpp.s
 
+client/src/ncursesUI.o: client/src/ncursesUI.cpp.o
+.PHONY : client/src/ncursesUI.o
+
+# target to build an object file
+client/src/ncursesUI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client/src/ncursesUI.cpp.o
+.PHONY : client/src/ncursesUI.cpp.o
+
+client/src/ncursesUI.i: client/src/ncursesUI.cpp.i
+.PHONY : client/src/ncursesUI.i
+
+# target to preprocess a source file
+client/src/ncursesUI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client/src/ncursesUI.cpp.i
+.PHONY : client/src/ncursesUI.cpp.i
+
+client/src/ncursesUI.s: client/src/ncursesUI.cpp.s
+.PHONY : client/src/ncursesUI.s
+
+# target to generate assembly for a file
+client/src/ncursesUI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client/src/ncursesUI.cpp.s
+.PHONY : client/src/ncursesUI.cpp.s
+
 common/common.o: common/common.cpp.o
 .PHONY : common/common.o
 
@@ -281,6 +305,9 @@ help:
 	@echo "... client/src/main.o"
 	@echo "... client/src/main.i"
 	@echo "... client/src/main.s"
+	@echo "... client/src/ncursesUI.o"
+	@echo "... client/src/ncursesUI.i"
+	@echo "... client/src/ncursesUI.s"
 	@echo "... common/common.o"
 	@echo "... common/common.i"
 	@echo "... common/common.s"

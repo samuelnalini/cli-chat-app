@@ -31,6 +31,12 @@
 },
 {
   "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/client.dir/client/src/ncursesUI.cpp.o -c /home/samuel/Projects/chat-app/client/src/ncursesUI.cpp",
+  "file": "/home/samuel/Projects/chat-app/client/src/ncursesUI.cpp",
+  "output": "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
   "command": "/usr/bin/c++   -std=gnu++23 -o CMakeFiles/client.dir/common/common.cpp.o -c /home/samuel/Projects/chat-app/common/common.cpp",
   "file": "/home/samuel/Projects/chat-app/common/common.cpp",
   "output": "CMakeFiles/client.dir/common/common.cpp.o"

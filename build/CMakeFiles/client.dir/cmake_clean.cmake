@@ -4,6 +4,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/client.dir/client/src/client.cpp.o.d"
   "CMakeFiles/client.dir/client/src/main.cpp.o"
   "CMakeFiles/client.dir/client/src/main.cpp.o.d"
+  "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o"
+  "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o.d"
   "CMakeFiles/client.dir/common/common.cpp.o"
   "CMakeFiles/client.dir/common/common.cpp.o.d"
   "client"

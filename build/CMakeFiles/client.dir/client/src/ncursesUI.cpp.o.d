@@ -1,7 +1,6 @@
-CMakeFiles/client.dir/client/src/main.cpp.o: \
- /home/samuel/Projects/chat-app/client/src/main.cpp \
+CMakeFiles/client.dir/client/src/ncursesUI.cpp.o: \
+ /home/samuel/Projects/chat-app/client/src/ncursesUI.cpp \
  /usr/include/stdc-predef.h \
- /home/samuel/Projects/chat-app/client/src/headers/client.hpp \
  /home/samuel/Projects/chat-app/client/src/headers/ncursesUI.hpp \
  /usr/include/curses.h /usr/include/ncurses_dll.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include/stdint.h \
@@ -189,44 +188,4 @@ CMakeFiles/client.dir/client/src/main.cpp.o: \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/include/linux/close_range.h /usr/include/syscall.h \
  /usr/include/sys/syscall.h /usr/include/asm/unistd.h \
- /usr/include/asm/unistd_64.h /usr/include/bits/syscall.h \
- /usr/include/netinet/in.h /usr/include/sys/socket.h \
- /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
- /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
- /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
- /usr/include/asm/sockios.h /usr/include/asm-generic/sockios.h \
- /usr/include/bits/types/struct_osockaddr.h /usr/include/bits/in.h \
- /usr/include/c++/15.1.1/thread /usr/include/c++/15.1.1/stop_token \
- /usr/include/c++/15.1.1/bits/std_thread.h \
- /usr/include/c++/15.1.1/bits/unique_ptr.h \
- /usr/include/c++/15.1.1/bits/ostream.h /usr/include/c++/15.1.1/ios \
- /usr/include/c++/15.1.1/bits/basic_ios.h \
- /usr/include/c++/15.1.1/bits/locale_facets.h \
- /usr/include/c++/15.1.1/cwctype /usr/include/wctype.h \
- /usr/include/bits/wctype-wchar.h \
- /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/ctype_base.h \
- /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/ctype_inline.h \
- /usr/include/c++/15.1.1/bits/locale_facets.tcc \
- /usr/include/c++/15.1.1/bits/basic_ios.tcc \
- /usr/include/c++/15.1.1/semaphore \
- /usr/include/c++/15.1.1/bits/semaphore_base.h \
- /usr/include/c++/15.1.1/bits/atomic_timed_wait.h \
- /usr/include/c++/15.1.1/bits/this_thread_sleep.h /usr/include/sys/time.h \
- /usr/include/semaphore.h /usr/include/bits/semaphore.h \
- /usr/include/c++/15.1.1/format /usr/include/c++/15.1.1/charconv \
- /usr/include/c++/15.1.1/locale \
- /usr/include/c++/15.1.1/bits/locale_facets_nonio.h \
- /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/time_members.h \
- /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/messages_members.h \
- /usr/include/libintl.h /usr/include/c++/15.1.1/bits/codecvt.h \
- /usr/include/c++/15.1.1/bits/locale_facets_nonio.tcc \
- /usr/include/c++/15.1.1/bits/locale_conv.h \
- /usr/include/c++/15.1.1/bits/unicode.h \
- /usr/include/c++/15.1.1/bits/stl_algo.h \
- /usr/include/c++/15.1.1/bits/algorithmfwd.h \
- /usr/include/c++/15.1.1/bits/uniform_int_dist.h \
- /usr/include/c++/15.1.1/bits/stl_tempbuf.h \
- /usr/include/c++/15.1.1/bits/unicode-data.h \
- /usr/include/c++/15.1.1/iostream /usr/include/c++/15.1.1/ostream \
- /usr/include/c++/15.1.1/bits/ostream.tcc /usr/include/c++/15.1.1/istream \
- /usr/include/c++/15.1.1/bits/istream.tcc
+ /usr/include/asm/unistd_64.h /usr/include/bits/syscall.h

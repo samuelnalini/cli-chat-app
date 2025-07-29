@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/samuel/Projects/chat-app/client/src/client.cpp" "CMakeFiles/client.dir/client/src/client.cpp.o" "gcc" "CMakeFiles/client.dir/client/src/client.cpp.o.d"
   "/home/samuel/Projects/chat-app/client/src/main.cpp" "CMakeFiles/client.dir/client/src/main.cpp.o" "gcc" "CMakeFiles/client.dir/client/src/main.cpp.o.d"
+  "/home/samuel/Projects/chat-app/client/src/ncursesUI.cpp" "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o" "gcc" "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o.d"
   "/home/samuel/Projects/chat-app/common/common.cpp" "CMakeFiles/client.dir/common/common.cpp.o" "gcc" "CMakeFiles/client.dir/common/common.cpp.o.d"
   "" "client" "gcc" "CMakeFiles/client.dir/link.d"
   )
