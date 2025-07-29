@@ -19,8 +19,7 @@ void Client::ListenForBroadcast(std::string username)
             m_exitReason = "Connection closed by server.";
             running = false;
             break;
-        }
-       
+        }      
 
         if (receivedMessage == "SERVER::USERNAME_TAKEN")
         {
@@ -29,36 +28,41 @@ void Client::ListenForBroadcast(std::string username)
             break;
         }
        
-        if (running && uiActive) // Avoids printing during cleanup
+        if (running && uiActive) {
             m_ui.PushMessage(receivedMessage);
+        }
     }
 }
 
 void Client::ClientLoop()
 {
-    std::string username = m_ui.PromptInput("Username: ");
-    if (username.empty() || username.length() > MAX_USERNAME_LEN)
+    auto username = m_ui.PromptInput("Username: ");
+
+    if (!username.has_value())
     {
         m_exitReason = "Invalid username";
-        running = false;
+        return;
+    }
+
+    if (username.value().empty() || username.value().length() > MAX_USERNAME_LEN)
+    {
+        m_exitReason = "Invalid username";
         return;
     }
   
-    if (!sendMessage(m_sock, username))
+    if (!sendMessage(m_sock, username.value()))
     {
         m_exitReason = "Failed to send username to server";
-        running = false;
         return;
     }
 
-    m_threadpool.emplace_back(&Client::ListenForBroadcast, this, username);
+    m_threadpool.emplace_back(&Client::ListenForBroadcast, this, username.value());
 
-    const std::string prompt = username + "> ";
+    const std::string prompt = username.value() + "> ";
 
     std::string inputBuffer;
-    bool runningLocal = true;
 
-    while (runningLocal && running)
+    while (running)
     {
         m_ui.RedrawInputLine(prompt, inputBuffer);
 
@@ -72,19 +76,23 @@ void Client::ClientLoop()
 
         if (ch == '\n')
         {
+            if (!running)
+                break;
+
             if (inputBuffer.empty())
                 continue;
 
             if (inputBuffer == "/exit")
             {
-                m_exitReason = "Client exited";
-                running = false;
-                runningLocal = false;
                 shutdown(m_sock, SHUT_RD);
+                m_exitReason = "Client exited";
+                
+                running = false;
+                
                 break;
             }
 
-            if (inputBuffer.length() > MAX_MESSAGE_LEN)
+            if ((inputBuffer.length() > MAX_MESSAGE_LEN) && running)
                 m_ui.PushMessage("Message too long.");
             else
             {
@@ -96,9 +104,9 @@ void Client::ClientLoop()
 
             inputBuffer.clear();
         }
-        else if (ch == KEY_BACKSPACE || ch == 127 || ch == '\b')
+        else if ((ch == KEY_BACKSPACE || ch == 127 || ch == '\b') && running)
             inputBuffer.pop_back();
-        else if (isprint(ch))
+        else if (isprint(ch) && running)
             inputBuffer.push_back((char)ch);
     }
 }
@@ -163,23 +171,25 @@ void Client::Start()
     CreateSocket();
 
     m_uiThread = std::thread(&Client::UIUpdateLoop, this);
+
     ClientLoop();
 
     running = false;
+    uiActive = false;
+
     for (auto& t : m_threadpool)
     {
         if (t.joinable())
             t.join();
     }
 
-    CloseSocket();
-
-    if (m_uiThread.joinable())
+    if (m_uiThread.joinable()) {
         m_uiThread.join();
+    }
 
-    uiActive = false;
+
     m_ui.Cleanup();
-
+    CloseSocket();
     if (m_exitReason != "None")
         std::cout << "Exited: " << m_exitReason << '\n';
 }

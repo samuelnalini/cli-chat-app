@@ -1,15 +1,14 @@
 #include "headers/ncursesUI.hpp"
 #include <ncurses.h>
+#include <optional>
+#include <thread>
 
 NcursesUI::NcursesUI()
     : m_msgWin(nullptr)
     , m_inputWin(nullptr)
 {}
 
-NcursesUI::~NcursesUI()
-{
-    Cleanup();
-}
+NcursesUI::~NcursesUI() {}
 
 void NcursesUI::Init()
 {
@@ -38,6 +37,7 @@ void NcursesUI::Init()
 void NcursesUI::Cleanup()
 {
     running = false;
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     if (m_msgWin)
         delwin(m_msgWin);
@@ -113,10 +113,10 @@ void NcursesUI::RedrawInputLine(const std::string& prompt, const std::string& in
     wrefresh(m_inputWin);
 }
 
-std::string NcursesUI::PromptInput(const std::string& prompt)
+std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
 {
     if (!running)
-        return "\0";
+        return std::nullopt;
 
     std::lock_guard<std::mutex> lock(m_mutex);
     std::string input;

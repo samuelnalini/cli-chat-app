@@ -23,7 +23,6 @@ public:
 public:
     std::atomic<bool> running{ false };
     std::atomic<bool> uiActive{ false };
-
 private:
     std::vector<std::thread> m_threadpool;
     std::thread m_uiThread;

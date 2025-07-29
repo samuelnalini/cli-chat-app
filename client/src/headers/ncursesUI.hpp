@@ -5,6 +5,7 @@
 #include <mutex>
 #include <queue>
 #include <atomic>
+#include <optional>
 
 class NcursesUI
 {
@@ -20,7 +21,11 @@ public:
     void PrintBufferedMessages();
     void RedrawInputLine(const std::string& prompt, const std::string& inputBuffer);
 
-    std::string PromptInput(const std::string& prompt);
+    std::optional<std::string> PromptInput(const std::string& prompt);
+
+public:
+    std::atomic<bool> running{ false };
+
 private:
     WINDOW* m_msgWin;
     WINDOW* m_inputWin;
@@ -29,7 +34,6 @@ private:
 
     std::queue<std::string> m_msgQueue;
     std::mutex m_queueMutex;
-    std::atomic<bool> running{ false };
 
     static const int INPUT_HEIGHT = 3;
 };
