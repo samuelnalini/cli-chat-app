@@ -55,8 +55,6 @@ Also, if you want to specify either the port or the IP you MUST specify both, ev
 
 *NOTE: This was designed to run on Linux machines! The socket code for other platforms are slightly different and will not work without modification!* (I will make this cross platform in the future*(tm)*)
 
-*I know the UI is bad, it doesn't use any UI actually. I might switch to using ncurses in the future.*
-
 ### THINGS I'VE LEARNED THROUGH THIS PROJECT:
   - User input
   - CMake Build Tools
