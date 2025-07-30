@@ -1,6 +1,9 @@
-# CLI Chat App Template
+# CLI Chat App
+*A simple command line chat application*
 
-*A simple chat app that runs in the command line.*
+### ABOUT:
+
+CLI Chat App is a simple command line application that allows communication between multiple users. It uses a client-server architecture, allowing for scalability and ease of use. Being written in C++, this application is fast and lightweight, making use of low level concepts such as sockets, while also using threads for asynchronous operations.
 
 *Please see considerations before attempting to use this!*
 
@@ -9,7 +12,7 @@
 The project is split up into two separate executables. The server listens to instructions and forwards messages to the clients connected to it.
 The client on the other hand connects to the server and is what users interact with. They are able to input messages which get sent to the server.
 
-#### SERVER INSTRUCTIONS
+#### - SERVER INSTRUCTIONS
 
 You can start the server simply by running it as an executable:
 
@@ -21,7 +24,7 @@ or
 
 It will then initialize and begin listening on the specified port.
 
-#### CLIENT INSTRUCTIONS
+#### - CLIENT INSTRUCTIONS
 
 The client is very similar to the server. It runs on the same IP and port to be able to communicate with it.
 
@@ -49,17 +52,19 @@ Also, if you want to specify either the port or the IP you MUST specify both, ev
 
 ### CONSIDERATIONS:
 
-*NOTE: Messages are **NOT ENCRYPTED!** This means that this app is **NOT SECURE** and others may be able to read chat logs. Do not use this for any real work. You have been warned.*
+*NOTE: As of right now, messages are **NOT ENCRYPTED!** This means that this app is not secure and others may be able to read chat logs. Do not use this for any real work. You have been warned.*
 
 *NOTE: I am still learning C++! There are certainly better ways to go about this and I am using this project as a learning experience.*
 
-*NOTE: This was designed to run on Linux machines! The socket code for other platforms are slightly different and will not work without modification!* (I will make this cross platform in the future*(tm)*)
+*NOTE: This was designed to run on Linux machines! The socket code for other platforms are slightly different and will not work without modification!*
+
+*This application is receiving active updates. It will improve in the future.*
 
 ### THINGS I'VE LEARNED THROUGH THIS PROJECT:
   - User input
   - CMake Build Tools
   - TCP Socket Implementation
-  - Basic Server Implementation
-  - Basic Client/Server Model
-  - Program input arguments (argc, argv)
-  - Reliably receiving and sending info from sockets through custom receiveMessage and sendMessage functions
+  - Basic Client/Server Architecture
+  - The use of threads, multithreading and thread safety
+  - Debugging skills
+  - Development in Linux
