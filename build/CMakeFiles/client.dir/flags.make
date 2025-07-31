@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/samuel/Projects/chat-app/common/headers
 
 CXX_FLAGS = -std=gnu++23
 

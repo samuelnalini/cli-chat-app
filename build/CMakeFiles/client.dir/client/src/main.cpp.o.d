@@ -190,12 +190,8 @@ CMakeFiles/client.dir/client/src/main.cpp.o: \
  /usr/include/linux/close_range.h /usr/include/syscall.h \
  /usr/include/sys/syscall.h /usr/include/asm/unistd.h \
  /usr/include/asm/unistd_64.h /usr/include/bits/syscall.h \
- /usr/include/netinet/in.h /usr/include/sys/socket.h \
- /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
- /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
- /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
- /usr/include/asm/sockios.h /usr/include/asm-generic/sockios.h \
- /usr/include/bits/types/struct_osockaddr.h /usr/include/bits/in.h \
+ /home/samuel/Projects/chat-app/common/headers/network_session.hpp \
+ /home/samuel/Projects/chat-app/common/headers/common.hpp \
  /usr/include/c++/15.1.1/thread /usr/include/c++/15.1.1/stop_token \
  /usr/include/c++/15.1.1/bits/std_thread.h \
  /usr/include/c++/15.1.1/bits/unique_ptr.h \

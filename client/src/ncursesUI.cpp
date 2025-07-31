@@ -139,7 +139,7 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
                 mvwprintw(m_inputWin, 1, startX, std::string(m_cols - startX - 1, ' ').c_str());
                 mvwprintw(m_inputWin, 1, startX, "%s", input.c_str());
                 wmove(m_inputWin, 1, startX + input.length());
-                wrefresh(m_msgWin);
+                wrefresh(m_inputWin);
             }
         } else if (isprint(ch))
         {
@@ -152,4 +152,3 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
 
     return input;
 }
-

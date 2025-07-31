@@ -114,26 +114,41 @@ CMakeFiles/client.dir/client/src/ncursesUI.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client.dir/client/src/ncursesUI.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/client/src/ncursesUI.cpp -o CMakeFiles/client.dir/client/src/ncursesUI.cpp.s
 
-CMakeFiles/client.dir/common/common.cpp.o: CMakeFiles/client.dir/flags.make
-CMakeFiles/client.dir/common/common.cpp.o: /home/samuel/Projects/chat-app/common/common.cpp
-CMakeFiles/client.dir/common/common.cpp.o: CMakeFiles/client.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/client.dir/common/common.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/client.dir/common/common.cpp.o -MF CMakeFiles/client.dir/common/common.cpp.o.d -o CMakeFiles/client.dir/common/common.cpp.o -c /home/samuel/Projects/chat-app/common/common.cpp
+CMakeFiles/client.dir/common/src/common.cpp.o: CMakeFiles/client.dir/flags.make
+CMakeFiles/client.dir/common/src/common.cpp.o: /home/samuel/Projects/chat-app/common/src/common.cpp
+CMakeFiles/client.dir/common/src/common.cpp.o: CMakeFiles/client.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/client.dir/common/src/common.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/client.dir/common/src/common.cpp.o -MF CMakeFiles/client.dir/common/src/common.cpp.o.d -o CMakeFiles/client.dir/common/src/common.cpp.o -c /home/samuel/Projects/chat-app/common/src/common.cpp
 
-CMakeFiles/client.dir/common/common.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/client.dir/common/common.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/samuel/Projects/chat-app/common/common.cpp > CMakeFiles/client.dir/common/common.cpp.i
+CMakeFiles/client.dir/common/src/common.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/client.dir/common/src/common.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/samuel/Projects/chat-app/common/src/common.cpp > CMakeFiles/client.dir/common/src/common.cpp.i
 
-CMakeFiles/client.dir/common/common.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client.dir/common/common.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/common/common.cpp -o CMakeFiles/client.dir/common/common.cpp.s
+CMakeFiles/client.dir/common/src/common.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client.dir/common/src/common.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/common/src/common.cpp -o CMakeFiles/client.dir/common/src/common.cpp.s
+
+CMakeFiles/client.dir/common/src/network_session.cpp.o: CMakeFiles/client.dir/flags.make
+CMakeFiles/client.dir/common/src/network_session.cpp.o: /home/samuel/Projects/chat-app/common/src/network_session.cpp
+CMakeFiles/client.dir/common/src/network_session.cpp.o: CMakeFiles/client.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/client.dir/common/src/network_session.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/client.dir/common/src/network_session.cpp.o -MF CMakeFiles/client.dir/common/src/network_session.cpp.o.d -o CMakeFiles/client.dir/common/src/network_session.cpp.o -c /home/samuel/Projects/chat-app/common/src/network_session.cpp
+
+CMakeFiles/client.dir/common/src/network_session.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/client.dir/common/src/network_session.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/samuel/Projects/chat-app/common/src/network_session.cpp > CMakeFiles/client.dir/common/src/network_session.cpp.i
+
+CMakeFiles/client.dir/common/src/network_session.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client.dir/common/src/network_session.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/common/src/network_session.cpp -o CMakeFiles/client.dir/common/src/network_session.cpp.s
 
 # Object files for target client
 client_OBJECTS = \
 "CMakeFiles/client.dir/client/src/main.cpp.o" \
 "CMakeFiles/client.dir/client/src/client.cpp.o" \
 "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o" \
-"CMakeFiles/client.dir/common/common.cpp.o"
+"CMakeFiles/client.dir/common/src/common.cpp.o" \
+"CMakeFiles/client.dir/common/src/network_session.cpp.o"
 
 # External object files for target client
 client_EXTERNAL_OBJECTS =
@@ -141,13 +156,14 @@ client_EXTERNAL_OBJECTS =
 client: CMakeFiles/client.dir/client/src/main.cpp.o
 client: CMakeFiles/client.dir/client/src/client.cpp.o
 client: CMakeFiles/client.dir/client/src/ncursesUI.cpp.o
-client: CMakeFiles/client.dir/common/common.cpp.o
+client: CMakeFiles/client.dir/common/src/common.cpp.o
+client: CMakeFiles/client.dir/common/src/network_session.cpp.o
 client: CMakeFiles/client.dir/build.make
 client: CMakeFiles/client.dir/compiler_depend.ts
 client: /usr/lib/libcurses.so
 client: /usr/lib/libform.so
 client: CMakeFiles/client.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable client"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/client.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

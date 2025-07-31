@@ -5,7 +5,8 @@ client: \
   CMakeFiles/client.dir/client/src/main.cpp.o \
   CMakeFiles/client.dir/client/src/client.cpp.o \
   CMakeFiles/client.dir/client/src/ncursesUI.cpp.o \
-  CMakeFiles/client.dir/common/common.cpp.o \
+  CMakeFiles/client.dir/common/src/common.cpp.o \
+  CMakeFiles/client.dir/common/src/network_session.cpp.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so \
@@ -14,6 +15,7 @@ client: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libform.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libform.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libformw.so \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libsodium.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libstdc++.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libm.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libm.so \
@@ -54,7 +56,9 @@ CMakeFiles/client.dir/client/src/client.cpp.o:
 
 CMakeFiles/client.dir/client/src/ncursesUI.cpp.o:
 
-CMakeFiles/client.dir/common/common.cpp.o:
+CMakeFiles/client.dir/common/src/common.cpp.o:
+
+CMakeFiles/client.dir/common/src/network_session.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so:
 
@@ -71,6 +75,8 @@ CMakeFiles/client.dir/common/common.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libform.so:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libformw.so:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libsodium.so:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libstdc++.so:
 

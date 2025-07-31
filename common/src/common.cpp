@@ -1,4 +1,4 @@
-#include "common.hpp"
+#include "../headers/common.hpp"
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -30,11 +30,6 @@ bool recvMessage(int fd, std::string& out)
 
     outLen = ntohl(outLen);
     
-    //if (outLen <= 0)
-    //{
-    //    return false;
-    //}
-
     // receive the string
 
     std::string buffer(outLen, '\0');

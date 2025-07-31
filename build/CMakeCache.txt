@@ -209,6 +209,9 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 //Path to a program.
 CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 
+//vcpkg toolchain file
+CMAKE_TOOLCHAIN_FILE:STRING=/home/samuel/Projects/chat-app/vcpkg/scripts/buildsystems/vcpkg.cmake
+
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
 // during the make.  This is useful for debugging only. With Visual
@@ -241,6 +244,9 @@ PKG_CONFIG_ARGN:STRING=
 
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
+
+//The directory containing a CMake configuration file for libsodium.
+libsodium_DIR:PATH=libsodium_DIR-NOTFOUND
 
 //Path to a library.
 pkgcfg_lib_NCURSES_ncursesw:FILEPATH=/usr/lib/libncursesw.so

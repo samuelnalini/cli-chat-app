@@ -2,6 +2,7 @@ CMakeFiles/server.dir/server/src/main.cpp.o: \
  /home/samuel/Projects/chat-app/server/src/main.cpp \
  /usr/include/stdc-predef.h \
  /home/samuel/Projects/chat-app/server/src/headers/server.hpp \
+ /home/samuel/Projects/chat-app/common/headers/network_session.hpp \
  /usr/include/c++/15.1.1/string \
  /usr/include/c++/15.1.1/bits/requires_hosted.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -111,35 +112,35 @@ CMakeFiles/server.dir/server/src/main.cpp.o: \
  /usr/include/c++/15.1.1/cstddef \
  /usr/include/c++/15.1.1/bits/uses_allocator.h \
  /usr/include/c++/15.1.1/bits/uses_allocator_args.h \
- /usr/include/c++/15.1.1/tuple /usr/include/sys/socket.h \
- /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
- /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
- /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
- /usr/include/linux/posix_types.h /usr/include/linux/stddef.h \
- /usr/include/asm/posix_types.h /usr/include/asm/posix_types_64.h \
- /usr/include/asm-generic/posix_types.h /usr/include/asm/bitsperlong.h \
- /usr/include/asm-generic/bitsperlong.h /usr/include/asm/sockios.h \
- /usr/include/asm-generic/sockios.h \
- /usr/include/bits/types/struct_osockaddr.h /usr/include/arpa/inet.h \
- /usr/include/netinet/in.h /usr/include/bits/stdint-uintn.h \
- /usr/include/bits/in.h /usr/include/unistd.h \
- /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
- /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
- /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
- /usr/include/linux/close_range.h /usr/include/c++/15.1.1/thread \
- /usr/include/c++/15.1.1/stop_token /usr/include/c++/15.1.1/atomic \
+ /usr/include/c++/15.1.1/tuple /usr/include/c++/15.1.1/optional \
+ /usr/include/c++/15.1.1/exception \
+ /usr/include/c++/15.1.1/bits/exception_ptr.h \
+ /usr/include/c++/15.1.1/bits/cxxabi_init_exception.h \
+ /usr/include/c++/15.1.1/typeinfo \
+ /usr/include/c++/15.1.1/bits/nested_exception.h \
+ /usr/include/c++/15.1.1/bits/enable_special_members.h \
+ /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/environments.h /usr/include/bits/confname.h \
+ /usr/include/bits/getopt_posix.h /usr/include/bits/getopt_core.h \
+ /usr/include/bits/unistd_ext.h /usr/include/linux/close_range.h \
+ /usr/include/c++/15.1.1/thread /usr/include/c++/15.1.1/stop_token \
+ /usr/include/c++/15.1.1/atomic \
  /usr/include/c++/15.1.1/bits/atomic_base.h \
  /usr/include/c++/15.1.1/bits/atomic_lockfree_defines.h \
  /usr/include/c++/15.1.1/bits/atomic_wait.h \
  /usr/include/c++/15.1.1/cstdint \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/include/stdint.h \
- /usr/include/stdint.h /usr/include/bits/stdint-least.h \
+ /usr/include/stdint.h /usr/include/bits/stdint-uintn.h \
+ /usr/include/bits/stdint-least.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/gthr.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/gthr-default.h \
  /usr/include/pthread.h /usr/include/sched.h /usr/include/bits/sched.h \
  /usr/include/linux/sched/types.h /usr/include/linux/types.h \
  /usr/include/asm/types.h /usr/include/asm-generic/types.h \
- /usr/include/asm-generic/int-ll64.h \
+ /usr/include/asm-generic/int-ll64.h /usr/include/asm/bitsperlong.h \
+ /usr/include/asm-generic/bitsperlong.h /usr/include/linux/posix_types.h \
+ /usr/include/linux/stddef.h /usr/include/asm/posix_types.h \
+ /usr/include/asm/posix_types_64.h /usr/include/asm-generic/posix_types.h \
  /usr/include/bits/types/struct_sched_param.h /usr/include/bits/cpu-set.h \
  /usr/include/time.h /usr/include/bits/time.h /usr/include/bits/timex.h \
  /usr/include/bits/types/struct_tm.h \
@@ -159,11 +160,6 @@ CMakeFiles/server.dir/server/src/main.cpp.o: \
  /usr/include/c++/15.1.1/bits/std_thread.h \
  /usr/include/c++/15.1.1/bits/unique_ptr.h \
  /usr/include/c++/15.1.1/bits/ostream.h /usr/include/c++/15.1.1/ios \
- /usr/include/c++/15.1.1/exception \
- /usr/include/c++/15.1.1/bits/exception_ptr.h \
- /usr/include/c++/15.1.1/bits/cxxabi_init_exception.h \
- /usr/include/c++/15.1.1/typeinfo \
- /usr/include/c++/15.1.1/bits/nested_exception.h \
  /usr/include/c++/15.1.1/bits/ios_base.h \
  /usr/include/c++/15.1.1/ext/atomicity.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/atomic_word.h \
@@ -198,10 +194,8 @@ CMakeFiles/server.dir/server/src/main.cpp.o: \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/messages_members.h \
  /usr/include/libintl.h /usr/include/c++/15.1.1/bits/codecvt.h \
  /usr/include/c++/15.1.1/bits/locale_facets_nonio.tcc \
- /usr/include/c++/15.1.1/bits/locale_conv.h \
- /usr/include/c++/15.1.1/optional \
- /usr/include/c++/15.1.1/bits/enable_special_members.h \
- /usr/include/c++/15.1.1/span /usr/include/c++/15.1.1/bits/monostate.h \
+ /usr/include/c++/15.1.1/bits/locale_conv.h /usr/include/c++/15.1.1/span \
+ /usr/include/c++/15.1.1/bits/monostate.h \
  /usr/include/c++/15.1.1/bits/formatfwd.h \
  /usr/include/c++/15.1.1/bits/unicode.h \
  /usr/include/c++/15.1.1/bits/stl_algo.h \
@@ -222,7 +216,13 @@ CMakeFiles/server.dir/server/src/main.cpp.o: \
  /usr/include/c++/15.1.1/ext/aligned_buffer.h \
  /usr/include/c++/15.1.1/bits/node_handle.h \
  /usr/include/c++/15.1.1/bits/erase_if.h /usr/include/c++/15.1.1/mutex \
- /usr/include/c++/15.1.1/bits/unique_lock.h \
+ /usr/include/c++/15.1.1/bits/unique_lock.h /usr/include/sys/socket.h \
+ /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
+ /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
+ /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
+ /usr/include/asm/sockios.h /usr/include/asm-generic/sockios.h \
+ /usr/include/bits/types/struct_osockaddr.h /usr/include/arpa/inet.h \
+ /usr/include/netinet/in.h /usr/include/bits/in.h \
  /usr/include/c++/15.1.1/iostream /usr/include/c++/15.1.1/ostream \
  /usr/include/c++/15.1.1/bits/ostream.tcc /usr/include/c++/15.1.1/istream \
  /usr/include/c++/15.1.1/bits/istream.tcc

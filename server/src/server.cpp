@@ -1,149 +1,156 @@
 #include "headers/server.hpp"
-#include "../../common/common.hpp"
 
-#include <iostream>
-#include <sys/socket.h>
 #include <arpa/inet.h>
+#include <mutex>
+#include <sys/socket.h>
 #include <unistd.h>
-#include <memory.h>
-#include <string>
-#include <thread>
-#include <cstring>
+#include <iostream>
 
-void Server::BroadcastMessage(const char *msg)
+Server::Server(std::string ip, int port)
+    : m_ip(std::move(ip))
+    , m_port(port)
+{}
+
+Server::~Server()
 {
-    std::lock_guard<std::mutex> lock(m_clientsMutex);
-    for (const auto& conn : m_clientpool)
-    {
-        if (!sendMessage(conn.second, msg))
-            std::cerr << "Failed to send message to client: " << conn.first << '\n';
-    }   
-}
-
-void Server::HandleClient(int clientSock)
-{
-    std::string username;
-   
-    if (!recvMessage(clientSock, username))
-        std::cerr << "Failed to receive username from client\n";
-    
-    {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
-        if (m_clientpool.find(username) != m_clientpool.end())
-        {
-            sendMessage(clientSock, "SERVER::USERNAME_TAKEN");
-            close(clientSock);
-            return;
-        }
-
-        m_clientpool[username] = clientSock;
-    }
-
-    std::cout << username << " has connected.\n";
-
-    std::string message;
-    while (running)
-    {
-        message.clear();
-
-        if (!recvMessage(clientSock, message))
-            break;
-            
-        if (message.empty())
-        { 
-            break;
-        }
-
-        std::string bcMsg{ username + ": " + message };
-        BroadcastMessage(bcMsg.c_str());
-    }
-
-    {
-        std::lock_guard<std::mutex> lock(m_clientsMutex);
-        m_clientpool.erase(username);
-    }
-
-    std::cout << username << " has disconnected.\n";
-    close(clientSock);
-}
-
-void Server::ServerLoop()
-{
-    while (running)
-    {
-
-        int clientSock = accept(m_sock, nullptr, nullptr);
-
-        if (clientSock < 0)
-        {
-            if (running)
-                perror("Accept failed");
-        }
-
-        m_threadpool.emplace_back(&Server::HandleClient, this, clientSock);
-    }
-
-    std::cout << "Connection closed\n"; 
-    BroadcastMessage("SERVER::CLOSE");
-
-    close(m_sock);
-}
-
-void Server::CreateSocket()
-{
-    m_sock = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (m_sock < 0)
-    {
-        perror("Socket creation failed");
-        exit(1);
-    }
-
-    memset(&server, 0, sizeof server);
-    server.sin_family = AF_INET;
-    server.sin_port = htons(m_port);
-
-    if (inet_pton(AF_INET, m_ip.c_str(), &server.sin_addr) <= 0)
-    {
-        std::cerr << "Invalid IP address: " << m_ip << '\n';
-        exit(1);
-    }
-
-    if (bind(m_sock, (struct sockaddr *)&server, sizeof server) < 0)
-    {
-        perror("Bind failed");
-        close(m_sock);
-        exit(1);
-    }
- 
-
-    if (listen(m_sock, 10) < 0)
-    {
-       perror("Listen failed");
-       close(m_sock);
-       exit(1);
-    }
-
-    std::cout << "Server listening on " << m_ip << ':' << m_port << '\n';
+    Stop();
 }
 
 void Server::Start()
 {
-    if (running)
+    if (m_running)
+        return;
+    
+    std::cout << "Starting server...\n";
+
+    m_running = true;
+
+    m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (m_listenfd < 0)
+    {
+        perror("socket()");
+        exit(1);
+    }
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(m_port);
+    inet_pton(AF_INET, m_ip.c_str(), &addr.sin_addr);
+
+    if (bind(m_listenfd, (sockaddr*) &addr, sizeof addr) < 0)
+    {
+        perror("bind()");
+        close(m_listenfd);
+        exit(1);
+    }
+
+    listen(m_listenfd, 10);
+    std::cout << "Server started...\n";
+    std::cout << "Listening on " << m_ip << ':' << m_port << '\n';
+
+    ServerLoop();
+}
+
+void Server::Stop()
+{
+    if (!m_running)
         return;
 
-    std::cout << "Starting server...\n";
-    running = true;
-    
-
-    CreateSocket(); 
-    ServerLoop();
+    m_running = false;
+    close(m_listenfd);
 
     for (auto& thread : m_threadpool)
     {
         if (thread.joinable())
-        {
             thread.join();
+    }
+}
+
+void Server::ServerLoop()
+{
+    while (m_running)
+    {
+        int clientfd{ accept(m_listenfd, nullptr, nullptr) };
+
+        if (clientfd < 0)
+        {
+            if (m_running)
+                perror("accept()");
+            break;    
+        }
+
+        auto session{ std::make_unique<NetworkSession>(clientfd) };
+        m_threadpool.emplace_back(&Server::HandleClientSession, this, std::move(session));
+    }
+}
+
+void Server::HandleClientSession(std::unique_ptr<NetworkSession> session)
+{
+   // Receive the username
+   auto usernameOpt{ session->RecvPacket() };
+   if (!usernameOpt)
+       return;
+
+   const std::string username{ *usernameOpt };
+
+   // Check username uniqueness
+
+   {
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
+        if (m_clientSessions.count(username))
+        {
+            session->SendPacket("SERVER::USERNAME_TAKEN");
+            return;
+        }
+
+        m_clientSessions.emplace(username, std::move(session));
+   }
+
+   std::cout << username << " has connected.\n";
+
+   // Client main loop
+
+   while (m_running)
+   {
+        std::unique_ptr<NetworkSession>& clientSession{ m_clientSessions[username] };
+        auto msgOpt{ clientSession->RecvPacket() };
+
+        if (!msgOpt || msgOpt->empty())
+            break;
+
+        std::string broadcast{ username + ": " + *msgOpt };
+        BroadcastMessage(broadcast);
+   }
+
+   // Disconnect
+   {
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
+        m_clientSessions.erase(username);
+   }
+
+   std::cout << username << " has disconnected.\n";
+}
+
+void Server::BroadcastMessage(const std::string& msg)
+{
+    std::vector<NetworkSession*> sessions;
+
+    {
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
+        
+        // Copies session pointers
+
+        for (auto& [user, sessionPtr] : m_clientSessions)
+        {
+            sessions.push_back(sessionPtr.get());
+        }
+    }
+
+    for (auto* sess : sessions)
+    {
+        if (!sess->SendPacket(msg))
+        {
+            std::cerr << "Failed to send msg to a client.\n";
         }
     }
 }

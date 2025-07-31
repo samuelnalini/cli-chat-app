@@ -100,36 +100,52 @@ CMakeFiles/server.dir/server/src/server.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/server/src/server.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/server/src/server.cpp -o CMakeFiles/server.dir/server/src/server.cpp.s
 
-CMakeFiles/server.dir/common/common.cpp.o: CMakeFiles/server.dir/flags.make
-CMakeFiles/server.dir/common/common.cpp.o: /home/samuel/Projects/chat-app/common/common.cpp
-CMakeFiles/server.dir/common/common.cpp.o: CMakeFiles/server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/server.dir/common/common.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/server.dir/common/common.cpp.o -MF CMakeFiles/server.dir/common/common.cpp.o.d -o CMakeFiles/server.dir/common/common.cpp.o -c /home/samuel/Projects/chat-app/common/common.cpp
+CMakeFiles/server.dir/common/src/common.cpp.o: CMakeFiles/server.dir/flags.make
+CMakeFiles/server.dir/common/src/common.cpp.o: /home/samuel/Projects/chat-app/common/src/common.cpp
+CMakeFiles/server.dir/common/src/common.cpp.o: CMakeFiles/server.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/server.dir/common/src/common.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/server.dir/common/src/common.cpp.o -MF CMakeFiles/server.dir/common/src/common.cpp.o.d -o CMakeFiles/server.dir/common/src/common.cpp.o -c /home/samuel/Projects/chat-app/common/src/common.cpp
 
-CMakeFiles/server.dir/common/common.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/common/common.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/samuel/Projects/chat-app/common/common.cpp > CMakeFiles/server.dir/common/common.cpp.i
+CMakeFiles/server.dir/common/src/common.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/common/src/common.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/samuel/Projects/chat-app/common/src/common.cpp > CMakeFiles/server.dir/common/src/common.cpp.i
 
-CMakeFiles/server.dir/common/common.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/common/common.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/common/common.cpp -o CMakeFiles/server.dir/common/common.cpp.s
+CMakeFiles/server.dir/common/src/common.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/common/src/common.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/common/src/common.cpp -o CMakeFiles/server.dir/common/src/common.cpp.s
+
+CMakeFiles/server.dir/common/src/network_session.cpp.o: CMakeFiles/server.dir/flags.make
+CMakeFiles/server.dir/common/src/network_session.cpp.o: /home/samuel/Projects/chat-app/common/src/network_session.cpp
+CMakeFiles/server.dir/common/src/network_session.cpp.o: CMakeFiles/server.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/server.dir/common/src/network_session.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/server.dir/common/src/network_session.cpp.o -MF CMakeFiles/server.dir/common/src/network_session.cpp.o.d -o CMakeFiles/server.dir/common/src/network_session.cpp.o -c /home/samuel/Projects/chat-app/common/src/network_session.cpp
+
+CMakeFiles/server.dir/common/src/network_session.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/server.dir/common/src/network_session.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/samuel/Projects/chat-app/common/src/network_session.cpp > CMakeFiles/server.dir/common/src/network_session.cpp.i
+
+CMakeFiles/server.dir/common/src/network_session.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/server.dir/common/src/network_session.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/samuel/Projects/chat-app/common/src/network_session.cpp -o CMakeFiles/server.dir/common/src/network_session.cpp.s
 
 # Object files for target server
 server_OBJECTS = \
 "CMakeFiles/server.dir/server/src/main.cpp.o" \
 "CMakeFiles/server.dir/server/src/server.cpp.o" \
-"CMakeFiles/server.dir/common/common.cpp.o"
+"CMakeFiles/server.dir/common/src/common.cpp.o" \
+"CMakeFiles/server.dir/common/src/network_session.cpp.o"
 
 # External object files for target server
 server_EXTERNAL_OBJECTS =
 
 server: CMakeFiles/server.dir/server/src/main.cpp.o
 server: CMakeFiles/server.dir/server/src/server.cpp.o
-server: CMakeFiles/server.dir/common/common.cpp.o
+server: CMakeFiles/server.dir/common/src/common.cpp.o
+server: CMakeFiles/server.dir/common/src/network_session.cpp.o
 server: CMakeFiles/server.dir/build.make
 server: CMakeFiles/server.dir/compiler_depend.ts
 server: CMakeFiles/server.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/samuel/Projects/chat-app/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable server"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/server.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

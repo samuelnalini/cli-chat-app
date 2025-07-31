@@ -214,32 +214,59 @@ client/src/ncursesUI.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/client/src/ncursesUI.cpp.s
 .PHONY : client/src/ncursesUI.cpp.s
 
-common/common.o: common/common.cpp.o
-.PHONY : common/common.o
+common/src/common.o: common/src/common.cpp.o
+.PHONY : common/src/common.o
 
 # target to build an object file
-common/common.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/common.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/common.cpp.o
-.PHONY : common/common.cpp.o
+common/src/common.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/common.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/common.cpp.o
+.PHONY : common/src/common.cpp.o
 
-common/common.i: common/common.cpp.i
-.PHONY : common/common.i
+common/src/common.i: common/src/common.cpp.i
+.PHONY : common/src/common.i
 
 # target to preprocess a source file
-common/common.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/common.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/common.cpp.i
-.PHONY : common/common.cpp.i
+common/src/common.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/common.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/common.cpp.i
+.PHONY : common/src/common.cpp.i
 
-common/common.s: common/common.cpp.s
-.PHONY : common/common.s
+common/src/common.s: common/src/common.cpp.s
+.PHONY : common/src/common.s
 
 # target to generate assembly for a file
-common/common.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/common.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/common.cpp.s
-.PHONY : common/common.cpp.s
+common/src/common.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/common.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/common.cpp.s
+.PHONY : common/src/common.cpp.s
+
+common/src/network_session.o: common/src/network_session.cpp.o
+.PHONY : common/src/network_session.o
+
+# target to build an object file
+common/src/network_session.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/network_session.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/network_session.cpp.o
+.PHONY : common/src/network_session.cpp.o
+
+common/src/network_session.i: common/src/network_session.cpp.i
+.PHONY : common/src/network_session.i
+
+# target to preprocess a source file
+common/src/network_session.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/network_session.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/network_session.cpp.i
+.PHONY : common/src/network_session.cpp.i
+
+common/src/network_session.s: common/src/network_session.cpp.s
+.PHONY : common/src/network_session.s
+
+# target to generate assembly for a file
+common/src/network_session.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/network_session.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/network_session.cpp.s
+.PHONY : common/src/network_session.cpp.s
 
 server/src/main.o: server/src/main.cpp.o
 .PHONY : server/src/main.o
@@ -308,9 +335,12 @@ help:
 	@echo "... client/src/ncursesUI.o"
 	@echo "... client/src/ncursesUI.i"
 	@echo "... client/src/ncursesUI.s"
-	@echo "... common/common.o"
-	@echo "... common/common.i"
-	@echo "... common/common.s"
+	@echo "... common/src/common.o"
+	@echo "... common/src/common.i"
+	@echo "... common/src/common.s"
+	@echo "... common/src/network_session.o"
+	@echo "... common/src/network_session.i"
+	@echo "... common/src/network_session.s"
 	@echo "... server/src/main.o"
 	@echo "... server/src/main.i"
 	@echo "... server/src/main.s"

@@ -1,0 +1,9 @@
+Package: libsodium
+Version: 1.0.20
+Port-Version: 3
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 9a5ff1bf937704c130a6949ccbb268c7a6b57af1fe7bcd09496050a2bd32e8d9
+Description: A modern and easy-to-use crypto library
+Status: install ok installed
+

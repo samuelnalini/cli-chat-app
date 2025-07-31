@@ -1,195 +1,191 @@
 #include "headers/client.hpp"
-#include "../../common/common.hpp"
 
 #include <chrono>
-#include <string>
 #include <iostream>
-#include <sys/socket.h>
-#include <unistd.h>
 #include <ncurses.h>
+#include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
+#include <stdexcept>
 
-void Client::ListenForBroadcast(std::string username)
+Client::Client(std::string ip, int port)
+    : m_ip(std::move(ip))
+    , m_port(port)
+{}
+
+Client::~Client()
+{}
+
+void Client::Start()
 {
-    std::string receivedMessage;
-    while (running && uiActive)
-    {
-        if (!recvMessage(m_sock, receivedMessage))
-        {
-            m_exitReason = "Connection closed by server.";
-            running = false;
-            break;
-        }      
+    if (m_running)
+        return;
 
-        if (receivedMessage == "SERVER::USERNAME_TAKEN")
+    m_uiActive = true;
+    m_ui.Init();
+
+    try
+    {
+        CreateSession();
+
+        // Username
+
+        auto usernameOpt{ m_ui.PromptInput("Username: ") };
+        if (!usernameOpt.has_value() || usernameOpt->empty() || usernameOpt->length() > MAX_USERNAME_LEN)
         {
-            m_exitReason = "Invalid username: already taken";
-            running = false;
-            break;
+            throw std::runtime_error("Invalid username");
         }
-       
-        if (running && uiActive) {
-            m_ui.PushMessage(receivedMessage);
+
+        const std::string username{ *usernameOpt };
+
+        if (!m_session->SendPacket(username))
+        {
+            throw std::runtime_error("Failed to send username");
         }
+
+        m_username = username;
+        m_running = true;
+
+        // Threads
+
+        m_threadPool.emplace_back(&Client::HandleBroadcast, this, username);
+        m_threadPool.emplace_back(&Client::ClientLoop, this);
+        m_uiThread = std::thread(&Client::UIUpdateLoop, this);
+
+        for (auto& thread : m_threadPool)
+        {
+            if (thread.joinable())
+                thread.join();
+        }
+    } catch (const std::exception& e)
+    {
+        m_exitReason = e.what();
     }
+
+    // Shutdown
+    
+    Stop();
+
+    if (m_exitReason != "None")
+    {
+        std::cout << "Exited: " << m_exitReason << '\n';
+    }
+}
+
+void Client::Stop()
+{
+    if (!m_running)
+        return;
+
+    m_running = false;
+    m_uiActive = false;
+    m_ui.Cleanup();
+    CloseSession();
+}
+
+void Client::CreateSession()
+{
+   int fd{ socket(AF_INET, SOCK_STREAM, 0) };
+
+   if (fd < 0)
+   {
+        perror("socket()");
+        throw std::runtime_error("Socket creation failed");
+   }
+
+   // Connect to the server
+   sockaddr_in addr{};
+
+   addr.sin_family = AF_INET;
+   addr.sin_port = htons(m_port);
+
+   if (inet_pton(AF_INET, m_ip.c_str(), &addr.sin_addr) <= 0)
+   {
+        close(fd);
+        throw std::runtime_error("Invalid IP address");
+   }
+
+   if (connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof addr) < 0)
+   {
+        perror("connect()");
+        close(fd);
+        throw std::runtime_error("Connection failed");
+   }
+
+   m_session = std::make_unique<NetworkSession>(fd);
+}
+
+void Client::CloseSession()
+{
+    m_session->CloseSession();
 }
 
 void Client::ClientLoop()
 {
-    auto username = m_ui.PromptInput("Username: ");
+    std::string buffer;
+    const std::string prompt{ " > " };
 
-    if (!username.has_value())
+    while (m_running)
     {
-        m_exitReason = "Invalid username";
-        return;
-    }
-
-    if (username.value().empty() || username.value().length() > MAX_USERNAME_LEN)
-    {
-        m_exitReason = "Invalid username";
-        return;
-    }
-  
-    if (!sendMessage(m_sock, username.value()))
-    {
-        m_exitReason = "Failed to send username to server";
-        return;
-    }
-
-    m_threadpool.emplace_back(&Client::ListenForBroadcast, this, username.value());
-
-    const std::string prompt = username.value() + "> ";
-
-    std::string inputBuffer;
-
-    while (running)
-    {
-        m_ui.RedrawInputLine(prompt, inputBuffer);
-
         int ch;
-
-        if (!m_ui.GetInputChar(ch))
+        
+        if (m_ui.GetInputChar(ch))
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            continue;
-        }
-
-        if (ch == '\n')
-        {
-            if (!running)
-                break;
-
-            if (inputBuffer.empty())
-                continue;
-
-            if (inputBuffer == "/exit")
+            if (ch == '\n' && !buffer.empty())
             {
-                shutdown(m_sock, SHUT_RD);
-                m_exitReason = "Client exited";
-                
-                running = false;
-                
-                break;
-            }
-
-            if ((inputBuffer.length() > MAX_MESSAGE_LEN) && running)
-                m_ui.PushMessage("Message too long.");
-            else
-            {
-                if (!sendMessage(m_sock, inputBuffer))
+                if (buffer == "/exit")
                 {
-                    m_ui.PushMessage("Error sending message");
+                    m_exitReason = "Client exited";
+                    Stop();
+                    break;
                 }
+
+                m_session->SendPacket(buffer);
+                buffer.clear();
+            } else if (ch == KEY_BACKSPACE || ch == 127 || ch == '\b')
+            {
+                if (!buffer.empty())
+                    buffer.pop_back();
+            } else if (isprint(ch))
+            {
+                buffer.push_back(static_cast<char>(ch));
             }
-
-            inputBuffer.clear();
         }
-        else if ((ch == KEY_BACKSPACE || ch == 127 || ch == '\b') && running)
-            inputBuffer.pop_back();
-        else if (isprint(ch) && running)
-            inputBuffer.push_back((char)ch);
+
+        m_ui.RedrawInputLine(m_username + prompt, buffer);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-}
-
-void Client::CreateSocket()
-{
-    m_sock = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (m_sock < 0)
-    {
-        perror("Socket creation failed");
-        exit(1);
-    }
-
-    sockaddr_in serverAddress{};
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(m_port);
-
-    if (inet_pton(AF_INET, m_ip.c_str(), &serverAddress.sin_addr) <= 0)
-    {
-        perror("Invalid IP address");
-        exit(1);
-    }
-
-    if (connect(m_sock, reinterpret_cast<struct sockaddr*>(&serverAddress), sizeof serverAddress) < 0)
-    {
-        perror("Connection error");
-        exit(1);
-    }
-    
-    std::cout << "Connected to " << m_ip << ':' << m_port << '\n';
 }
 
 void Client::UIUpdateLoop()
 {
-    while (running && uiActive)
+    while (m_running)
     {
         m_ui.PrintBufferedMessages();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
-void Client::CloseSocket()
+void Client::HandleBroadcast(const std::string& username)
 {
-    if (m_sock >= 0)
+    while (m_running)
     {
-        shutdown(m_sock, SHUT_RDWR);
-        close(m_sock);
-        m_sock = -1;
+        auto msgOpt{ m_session->RecvPacket() };
+        if (!msgOpt.has_value())
+        {
+            m_exitReason = "Connection closed by server.";
+            Stop();
+            break;
+        }
+
+        const auto& msg{ *msgOpt };
+        if (msg == "SERVER::USERNAME_TAKEN")
+        {
+            m_exitReason = "Username already taken";
+            Stop();
+            break;
+        }
+
+        m_ui.PushMessage(msg);
     }
-}
-
-void Client::Start()
-{
-    if (running)
-        return;
-
-    running = true;
-    m_ui.Init();
-    uiActive = true;
-
-    CreateSocket();
-
-    m_uiThread = std::thread(&Client::UIUpdateLoop, this);
-
-    ClientLoop();
-
-    running = false;
-    uiActive = false;
-
-    for (auto& t : m_threadpool)
-    {
-        if (t.joinable())
-            t.join();
-    }
-
-    if (m_uiThread.joinable()) {
-        m_uiThread.join();
-    }
-
-
-    m_ui.Cleanup();
-    CloseSocket();
-    if (m_exitReason != "None")
-        std::cout << "Exited: " << m_exitReason << '\n';
 }

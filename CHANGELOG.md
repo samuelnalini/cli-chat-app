@@ -1,3 +1,22 @@
+# 0.3.0 - Refactor and expansion
+    ADDITIONS
+    [+] vcpkg package manager
+    [+] libsodium for future message encryption
+    [+] Reintroduced seg fault on exit (TODO lol)
+
+    BUG FIXES
+    [-] Fixed a bug with ncurses window refreshing
+    
+    MISC
+    [-] Added common/headers and common/src for consistency
+    [-] Added network_session as a network wrapper
+    [-] Added documentation in certain files (WIP)
+    [-] Switched remaining class function names to CamelCase for consistency
+    [-] Renamed remaining member variables to reflect the 'm_varName' style
+    [-] Refactored server code to reflect the new NetworkSession class.
+    [-] Implemented unique_ptr for improved memory management
+    [-] server/HandleClient was replaced with HandleClientSession
+
 # 0.2.1
     BUG FIXES
     [-] Fixed segmentation fault on /exit

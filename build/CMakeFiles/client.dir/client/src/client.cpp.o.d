@@ -190,12 +190,8 @@ CMakeFiles/client.dir/client/src/client.cpp.o: \
  /usr/include/linux/close_range.h /usr/include/syscall.h \
  /usr/include/sys/syscall.h /usr/include/asm/unistd.h \
  /usr/include/asm/unistd_64.h /usr/include/bits/syscall.h \
- /usr/include/netinet/in.h /usr/include/sys/socket.h \
- /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
- /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
- /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
- /usr/include/asm/sockios.h /usr/include/asm-generic/sockios.h \
- /usr/include/bits/types/struct_osockaddr.h /usr/include/bits/in.h \
+ /home/samuel/Projects/chat-app/common/headers/network_session.hpp \
+ /home/samuel/Projects/chat-app/common/headers/common.hpp \
  /usr/include/c++/15.1.1/thread /usr/include/c++/15.1.1/stop_token \
  /usr/include/c++/15.1.1/bits/std_thread.h \
  /usr/include/c++/15.1.1/bits/unique_ptr.h \
@@ -227,7 +223,6 @@ CMakeFiles/client.dir/client/src/client.cpp.o: \
  /usr/include/c++/15.1.1/bits/uniform_int_dist.h \
  /usr/include/c++/15.1.1/bits/stl_tempbuf.h \
  /usr/include/c++/15.1.1/bits/unicode-data.h \
- /home/samuel/Projects/chat-app/client/src/../../common/common.hpp \
  /usr/include/c++/15.1.1/chrono /usr/include/c++/15.1.1/sstream \
  /usr/include/c++/15.1.1/istream /usr/include/c++/15.1.1/ostream \
  /usr/include/c++/15.1.1/bits/ostream.tcc \
@@ -241,4 +236,10 @@ CMakeFiles/client.dir/client/src/client.cpp.o: \
  /usr/include/c++/15.1.1/bits/align.h \
  /usr/include/c++/15.1.1/bits/chrono_io.h /usr/include/c++/15.1.1/iomanip \
  /usr/include/c++/15.1.1/bits/quoted_string.h \
- /usr/include/c++/15.1.1/iostream /usr/include/arpa/inet.h
+ /usr/include/c++/15.1.1/iostream /usr/include/sys/socket.h \
+ /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
+ /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \
+ /usr/include/asm/socket.h /usr/include/asm-generic/socket.h \
+ /usr/include/asm/sockios.h /usr/include/asm-generic/sockios.h \
+ /usr/include/bits/types/struct_osockaddr.h /usr/include/arpa/inet.h \
+ /usr/include/netinet/in.h /usr/include/bits/in.h
