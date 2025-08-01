@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/samuel/Projects/chat-app/client/src/main.cpp" "CMakeFiles/client.dir/client/src/main.cpp.o" "gcc" "CMakeFiles/client.dir/client/src/main.cpp.o.d"
   "/home/samuel/Projects/chat-app/client/src/ncursesUI.cpp" "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o" "gcc" "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o.d"
   "/home/samuel/Projects/chat-app/common/src/common.cpp" "CMakeFiles/client.dir/common/src/common.cpp.o" "gcc" "CMakeFiles/client.dir/common/src/common.cpp.o.d"
+  "/home/samuel/Projects/chat-app/common/src/debug.cpp" "CMakeFiles/client.dir/common/src/debug.cpp.o" "gcc" "CMakeFiles/client.dir/common/src/debug.cpp.o.d"
   "/home/samuel/Projects/chat-app/common/src/network_session.cpp" "CMakeFiles/client.dir/common/src/network_session.cpp.o" "gcc" "CMakeFiles/client.dir/common/src/network_session.cpp.o.d"
   "" "client" "gcc" "CMakeFiles/client.dir/link.d"
   )

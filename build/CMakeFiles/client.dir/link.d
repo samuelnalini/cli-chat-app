@@ -7,6 +7,7 @@ client: \
   CMakeFiles/client.dir/client/src/ncursesUI.cpp.o \
   CMakeFiles/client.dir/common/src/common.cpp.o \
   CMakeFiles/client.dir/common/src/network_session.cpp.o \
+  CMakeFiles/client.dir/common/src/debug.cpp.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so \
@@ -59,6 +60,8 @@ CMakeFiles/client.dir/client/src/ncursesUI.cpp.o:
 CMakeFiles/client.dir/common/src/common.cpp.o:
 
 CMakeFiles/client.dir/common/src/network_session.cpp.o:
+
+CMakeFiles/client.dir/common/src/debug.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libcurses.so:
 

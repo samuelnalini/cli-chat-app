@@ -8,6 +8,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/client.dir/client/src/ncursesUI.cpp.o.d"
   "CMakeFiles/client.dir/common/src/common.cpp.o"
   "CMakeFiles/client.dir/common/src/common.cpp.o.d"
+  "CMakeFiles/client.dir/common/src/debug.cpp.o"
+  "CMakeFiles/client.dir/common/src/debug.cpp.o.d"
   "CMakeFiles/client.dir/common/src/network_session.cpp.o"
   "CMakeFiles/client.dir/common/src/network_session.cpp.o.d"
   "client"

@@ -1,7 +1,7 @@
 CMakeFiles/client.dir/common/src/common.cpp.o: \
  /home/samuel/Projects/chat-app/common/src/common.cpp \
  /usr/include/stdc-predef.h \
- /home/samuel/Projects/chat-app/common/src/../headers/common.hpp \
+ /home/samuel/Projects/chat-app/common/headers/common.hpp \
  /usr/include/unistd.h /usr/include/features.h \
  /usr/include/features-time64.h /usr/include/bits/wordsize.h \
  /usr/include/bits/timesize.h /usr/include/sys/cdefs.h \

@@ -25,6 +25,12 @@
 },
 {
   "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++  -I/home/samuel/Projects/chat-app/common/headers -std=gnu++23 -o CMakeFiles/server.dir/common/src/debug.cpp.o -c /home/samuel/Projects/chat-app/common/src/debug.cpp",
+  "file": "/home/samuel/Projects/chat-app/common/src/debug.cpp",
+  "output": "CMakeFiles/server.dir/common/src/debug.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
   "command": "/usr/bin/c++  -I/home/samuel/Projects/chat-app/common/headers -std=gnu++23 -o CMakeFiles/client.dir/client/src/main.cpp.o -c /home/samuel/Projects/chat-app/client/src/main.cpp",
   "file": "/home/samuel/Projects/chat-app/client/src/main.cpp",
   "output": "CMakeFiles/client.dir/client/src/main.cpp.o"
@@ -52,5 +58,11 @@
   "command": "/usr/bin/c++  -I/home/samuel/Projects/chat-app/common/headers -std=gnu++23 -o CMakeFiles/client.dir/common/src/network_session.cpp.o -c /home/samuel/Projects/chat-app/common/src/network_session.cpp",
   "file": "/home/samuel/Projects/chat-app/common/src/network_session.cpp",
   "output": "CMakeFiles/client.dir/common/src/network_session.cpp.o"
+},
+{
+  "directory": "/home/samuel/Projects/chat-app/build",
+  "command": "/usr/bin/c++  -I/home/samuel/Projects/chat-app/common/headers -std=gnu++23 -o CMakeFiles/client.dir/common/src/debug.cpp.o -c /home/samuel/Projects/chat-app/common/src/debug.cpp",
+  "file": "/home/samuel/Projects/chat-app/common/src/debug.cpp",
+  "output": "CMakeFiles/client.dir/common/src/debug.cpp.o"
 }
 ]

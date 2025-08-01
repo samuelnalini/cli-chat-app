@@ -3,6 +3,7 @@
 #include "ncursesUI.hpp"
 #include "network_session.hpp"
 #include "common.hpp"
+#include "debug.hpp"
 
 #include <string>
 #include <vector>
@@ -23,6 +24,7 @@ private:
     std::unique_ptr<NetworkSession> m_session;
 
     NcursesUI m_ui;
+    Debugger m_debugger;
 
     std::vector<std::thread> m_threadPool;
     std::thread m_uiThread;

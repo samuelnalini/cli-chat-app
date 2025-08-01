@@ -54,8 +54,6 @@ Also, if you want to specify either the port or the IP you MUST specify both, ev
 
 *NOTE: As of right now, messages are **NOT ENCRYPTED!** This means that this app is not secure and others may be able to read chat logs. Do not use this for any real work. You have been warned.*
 
-*NOTE: I am still learning C++! There are certainly better ways to go about this and I am using this project as a learning experience.*
-
 *NOTE: This was designed to run on Linux machines! The socket code for other platforms are slightly different and will not work without modification!*
 
 *This application is receiving active updates. It will improve in the future.*

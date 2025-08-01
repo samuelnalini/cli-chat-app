@@ -192,50 +192,54 @@ CMakeFiles/client.dir/client/src/client.cpp.o: \
  /usr/include/asm/unistd_64.h /usr/include/bits/syscall.h \
  /home/samuel/Projects/chat-app/common/headers/network_session.hpp \
  /home/samuel/Projects/chat-app/common/headers/common.hpp \
- /usr/include/c++/15.1.1/thread /usr/include/c++/15.1.1/stop_token \
- /usr/include/c++/15.1.1/bits/std_thread.h \
- /usr/include/c++/15.1.1/bits/unique_ptr.h \
- /usr/include/c++/15.1.1/bits/ostream.h /usr/include/c++/15.1.1/ios \
- /usr/include/c++/15.1.1/bits/basic_ios.h \
+ /home/samuel/Projects/chat-app/common/headers/debug.hpp \
+ /usr/include/c++/15.1.1/filesystem /usr/include/c++/15.1.1/bits/fs_fwd.h \
+ /usr/include/c++/15.1.1/bits/fs_path.h /usr/include/c++/15.1.1/locale \
  /usr/include/c++/15.1.1/bits/locale_facets.h \
  /usr/include/c++/15.1.1/cwctype /usr/include/wctype.h \
  /usr/include/bits/wctype-wchar.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/ctype_base.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/ctype_inline.h \
  /usr/include/c++/15.1.1/bits/locale_facets.tcc \
- /usr/include/c++/15.1.1/bits/basic_ios.tcc \
- /usr/include/c++/15.1.1/semaphore \
- /usr/include/c++/15.1.1/bits/semaphore_base.h \
- /usr/include/c++/15.1.1/bits/atomic_timed_wait.h \
- /usr/include/c++/15.1.1/bits/this_thread_sleep.h /usr/include/sys/time.h \
- /usr/include/semaphore.h /usr/include/bits/semaphore.h \
- /usr/include/c++/15.1.1/format /usr/include/c++/15.1.1/charconv \
- /usr/include/c++/15.1.1/locale \
  /usr/include/c++/15.1.1/bits/locale_facets_nonio.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/time_members.h \
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/messages_members.h \
  /usr/include/libintl.h /usr/include/c++/15.1.1/bits/codecvt.h \
  /usr/include/c++/15.1.1/bits/locale_facets_nonio.tcc \
  /usr/include/c++/15.1.1/bits/locale_conv.h \
+ /usr/include/c++/15.1.1/iomanip \
+ /usr/include/c++/15.1.1/bits/quoted_string.h \
+ /usr/include/c++/15.1.1/sstream /usr/include/c++/15.1.1/istream \
+ /usr/include/c++/15.1.1/ios /usr/include/c++/15.1.1/bits/basic_ios.h \
+ /usr/include/c++/15.1.1/bits/basic_ios.tcc \
+ /usr/include/c++/15.1.1/ostream /usr/include/c++/15.1.1/bits/ostream.h \
+ /usr/include/c++/15.1.1/format /usr/include/c++/15.1.1/charconv \
  /usr/include/c++/15.1.1/bits/unicode.h \
  /usr/include/c++/15.1.1/bits/stl_algo.h \
  /usr/include/c++/15.1.1/bits/algorithmfwd.h \
  /usr/include/c++/15.1.1/bits/uniform_int_dist.h \
  /usr/include/c++/15.1.1/bits/stl_tempbuf.h \
  /usr/include/c++/15.1.1/bits/unicode-data.h \
- /usr/include/c++/15.1.1/chrono /usr/include/c++/15.1.1/sstream \
- /usr/include/c++/15.1.1/istream /usr/include/c++/15.1.1/ostream \
  /usr/include/c++/15.1.1/bits/ostream.tcc \
  /usr/include/c++/15.1.1/bits/istream.tcc \
- /usr/include/c++/15.1.1/bits/sstream.tcc \
+ /usr/include/c++/15.1.1/bits/sstream.tcc /usr/include/c++/15.1.1/codecvt \
+ /usr/include/c++/15.1.1/ext/concurrence.h \
  /usr/include/c++/15.1.1/bits/shared_ptr.h \
  /usr/include/c++/15.1.1/bits/shared_ptr_base.h \
  /usr/include/c++/15.1.1/bits/allocated_ptr.h \
+ /usr/include/c++/15.1.1/bits/unique_ptr.h \
  /usr/include/c++/15.1.1/ext/aligned_buffer.h \
- /usr/include/c++/15.1.1/ext/concurrence.h \
  /usr/include/c++/15.1.1/bits/align.h \
- /usr/include/c++/15.1.1/bits/chrono_io.h /usr/include/c++/15.1.1/iomanip \
- /usr/include/c++/15.1.1/bits/quoted_string.h \
+ /usr/include/c++/15.1.1/bits/fs_dir.h \
+ /usr/include/c++/15.1.1/bits/fs_ops.h /usr/include/c++/15.1.1/thread \
+ /usr/include/c++/15.1.1/stop_token \
+ /usr/include/c++/15.1.1/bits/std_thread.h \
+ /usr/include/c++/15.1.1/semaphore \
+ /usr/include/c++/15.1.1/bits/semaphore_base.h \
+ /usr/include/c++/15.1.1/bits/atomic_timed_wait.h \
+ /usr/include/c++/15.1.1/bits/this_thread_sleep.h /usr/include/sys/time.h \
+ /usr/include/semaphore.h /usr/include/bits/semaphore.h \
+ /usr/include/c++/15.1.1/chrono /usr/include/c++/15.1.1/bits/chrono_io.h \
  /usr/include/c++/15.1.1/iostream /usr/include/sys/socket.h \
  /usr/include/bits/types/struct_iovec.h /usr/include/bits/socket.h \
  /usr/include/bits/socket_type.h /usr/include/bits/sockaddr.h \

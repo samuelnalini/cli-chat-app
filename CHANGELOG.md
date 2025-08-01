@@ -1,3 +1,14 @@
+# 0.3.1 - Debugger update
+    ADDITIONS
+    [+] Added a debugger class to allow for more robust logging
+
+    BUG FIXES
+    [-] Segmentation fault on exit has been fixed (again)
+    [-] Fixed all known bugs
+
+    MISC
+    [-] Stability improvements
+
 # 0.3.0 - Refactor and expansion
     ADDITIONS
     [+] vcpkg package manager
@@ -17,7 +28,7 @@
     [-] Implemented unique_ptr for improved memory management
     [-] server/HandleClient was replaced with HandleClientSession
 
-# 0.2.1
+# 0.2.1 - Hotfix
     BUG FIXES
     [-] Fixed segmentation fault on /exit
     [-] Fixed all known bugs

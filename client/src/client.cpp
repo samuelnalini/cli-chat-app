@@ -1,4 +1,5 @@
 #include "headers/client.hpp"
+#include "debug.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -11,9 +12,10 @@
 Client::Client(std::string ip, int port)
     : m_ip(std::move(ip))
     , m_port(port)
+    , m_debugger("log.txt")
 {}
 
-Client::~Client()
+Client::~Client() 
 {}
 
 void Client::Start()
@@ -23,6 +25,7 @@ void Client::Start()
 
     m_uiActive = true;
     m_ui.Init();
+    m_debugger.Start();
 
     try
     {
@@ -33,6 +36,8 @@ void Client::Start()
         auto usernameOpt{ m_ui.PromptInput("Username: ") };
         if (!usernameOpt.has_value() || usernameOpt->empty() || usernameOpt->length() > MAX_USERNAME_LEN)
         {
+            std::string logStr{ "Invalid username " + *usernameOpt };
+            m_debugger.Log(logStr.c_str());
             throw std::runtime_error("Invalid username");
         }
 
@@ -40,6 +45,8 @@ void Client::Start()
 
         if (!m_session->SendPacket(username))
         {
+            std::string logStr{ "Invalid username " + username };
+            m_debugger.Log(logStr.c_str());
             throw std::runtime_error("Failed to send username");
         }
 
@@ -59,6 +66,7 @@ void Client::Start()
         }
     } catch (const std::exception& e)
     {
+        m_debugger.Log(e.what());
         m_exitReason = e.what();
     }
 
@@ -68,6 +76,7 @@ void Client::Start()
 
     if (m_exitReason != "None")
     {
+        m_debugger.Log(m_exitReason.c_str());
         std::cout << "Exited: " << m_exitReason << '\n';
     }
 }
@@ -75,10 +84,18 @@ void Client::Start()
 void Client::Stop()
 {
     if (!m_running)
+    {
+        m_debugger.Log("WARNING: Client is already stopped.");
         return;
-
+    }
+   
+    m_debugger.Stop();
     m_running = false;
     m_uiActive = false;
+
+    if (m_uiThread.joinable())
+        m_uiThread.join();
+
     m_ui.Cleanup();
     CloseSession();
 }
@@ -89,6 +106,8 @@ void Client::CreateSession()
 
    if (fd < 0)
    {
+        m_debugger.Log("Socket error");
+        Stop();
         perror("socket()");
         throw std::runtime_error("Socket creation failed");
    }
@@ -101,14 +120,17 @@ void Client::CreateSession()
 
    if (inet_pton(AF_INET, m_ip.c_str(), &addr.sin_addr) <= 0)
    {
-        close(fd);
-        throw std::runtime_error("Invalid IP address");
+       std::string logStr{ "Invalid IP address: " + m_ip };
+       m_debugger.Log(logStr.c_str());
+       Stop();
+       throw std::runtime_error("Invalid IP address");
    }
 
    if (connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof addr) < 0)
    {
+        m_debugger.Log("Connection failed");   
         perror("connect()");
-        close(fd);
+        Stop();
         throw std::runtime_error("Connection failed");
    }
 
@@ -173,7 +195,8 @@ void Client::HandleBroadcast(const std::string& username)
         auto msgOpt{ m_session->RecvPacket() };
         if (!msgOpt.has_value())
         {
-            m_exitReason = "Connection closed by server.";
+            m_debugger.Log("Server closed connection");   
+            m_exitReason = "Server closed connection.";
             Stop();
             break;
         }
@@ -181,6 +204,8 @@ void Client::HandleBroadcast(const std::string& username)
         const auto& msg{ *msgOpt };
         if (msg == "SERVER::USERNAME_TAKEN")
         {
+            std::string logStr{ "Username " + username + " is already taken" };
+            m_debugger.Log(logStr.c_str());
             m_exitReason = "Username already taken";
             Stop();
             break;

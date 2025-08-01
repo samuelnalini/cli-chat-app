@@ -6,6 +6,7 @@ server: \
   CMakeFiles/server.dir/server/src/server.cpp.o \
   CMakeFiles/server.dir/common/src/common.cpp.o \
   CMakeFiles/server.dir/common/src/network_session.cpp.o \
+  CMakeFiles/server.dir/common/src/debug.cpp.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libsodium.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libstdc++.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libm.so \
@@ -48,6 +49,8 @@ CMakeFiles/server.dir/server/src/server.cpp.o:
 CMakeFiles/server.dir/common/src/common.cpp.o:
 
 CMakeFiles/server.dir/common/src/network_session.cpp.o:
+
+CMakeFiles/server.dir/common/src/debug.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.1.1/../../../../lib/libsodium.so:
 

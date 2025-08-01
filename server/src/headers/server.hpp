@@ -1,6 +1,7 @@
 #pragma once
 
 #include "network_session.hpp"
+#include "debug.hpp"
 
 #include <string>
 #include <unistd.h>
@@ -30,6 +31,7 @@ private:
     std::mutex m_clientsMutex;
 
     std::vector<std::thread> m_threadpool;
+    Debugger m_debugger;
 
     std::string m_ip;
     int m_port;

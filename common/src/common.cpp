@@ -1,4 +1,4 @@
-#include "../headers/common.hpp"
+#include "common.hpp"
 
 #include <unistd.h>
 #include <sys/socket.h>

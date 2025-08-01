@@ -27,6 +27,7 @@ add_executable(server
     ${SERVER_SOURCES}/server.cpp
     ${COMMON_SOURCES}/common.cpp
     ${COMMON_SOURCES}/network_session.cpp
+    ${COMMON_SOURCES}/debug.cpp
 )
 
 target_include_directories(server
@@ -44,6 +45,7 @@ add_executable(client
     ${CLIENT_SOURCES}/ncursesUI.cpp
     ${COMMON_SOURCES}/common.cpp
     ${COMMON_SOURCES}/network_session.cpp
+    ${COMMON_SOURCES}/debug.cpp
 )
 
 

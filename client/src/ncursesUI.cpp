@@ -37,7 +37,7 @@ void NcursesUI::Init()
 void NcursesUI::Cleanup()
 {
     running = false;
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     if (m_msgWin)
         delwin(m_msgWin);

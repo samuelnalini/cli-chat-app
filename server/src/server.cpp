@@ -9,6 +9,7 @@
 Server::Server(std::string ip, int port)
     : m_ip(std::move(ip))
     , m_port(port)
+    , m_debugger("server_log.txt")
 {}
 
 Server::~Server()
@@ -21,6 +22,9 @@ void Server::Start()
     if (m_running)
         return;
     
+    m_debugger.Start();
+
+    m_debugger.Log("Starting server...");
     std::cout << "Starting server...\n";
 
     m_running = true;
@@ -28,6 +32,7 @@ void Server::Start()
     m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if (m_listenfd < 0)
     {
+        m_debugger.Log("SERVER: Failed to create socket");
         perror("socket()");
         exit(1);
     }
@@ -45,7 +50,9 @@ void Server::Start()
     }
 
     listen(m_listenfd, 10);
-    std::cout << "Server started...\n";
+
+    m_debugger.Log("Server started");
+    std::cout << "Server started\n";
     std::cout << "Listening on " << m_ip << ':' << m_port << '\n';
 
     ServerLoop();
@@ -57,6 +64,7 @@ void Server::Stop()
         return;
 
     m_running = false;
+    m_debugger.Stop();
     close(m_listenfd);
 
     for (auto& thread : m_threadpool)
@@ -75,7 +83,10 @@ void Server::ServerLoop()
         if (clientfd < 0)
         {
             if (m_running)
+            {
+                m_debugger.Log("SERVER: Failed to accept connection.");
                 perror("accept()");
+            }
             break;    
         }
 
@@ -99,6 +110,7 @@ void Server::HandleClientSession(std::unique_ptr<NetworkSession> session)
         std::lock_guard<std::mutex> lock(m_clientsMutex);
         if (m_clientSessions.count(username))
         {
+            m_debugger.Log("SERVER: Attempt to login with taken username");
             session->SendPacket("SERVER::USERNAME_TAKEN");
             return;
         }
@@ -106,8 +118,11 @@ void Server::HandleClientSession(std::unique_ptr<NetworkSession> session)
         m_clientSessions.emplace(username, std::move(session));
    }
 
-   std::cout << username << " has connected.\n";
-
+   {
+       std::string logStr{ username + " has connected" };
+       m_debugger.Log(logStr.c_str());
+       std::cout << logStr << '\n';
+   }
    // Client main loop
 
    while (m_running)
@@ -128,7 +143,11 @@ void Server::HandleClientSession(std::unique_ptr<NetworkSession> session)
         m_clientSessions.erase(username);
    }
 
-   std::cout << username << " has disconnected.\n";
+   {
+       std::string logStr{ username + " has disconnected" };
+       m_debugger.Log(logStr.c_str());
+       std::cout << logStr << '\n';
+   }
 }
 
 void Server::BroadcastMessage(const std::string& msg)
@@ -150,6 +169,7 @@ void Server::BroadcastMessage(const std::string& msg)
     {
         if (!sess->SendPacket(msg))
         {
+            m_debugger.Log("SERVER: Failed to send msg to a client.");
             std::cerr << "Failed to send msg to a client.\n";
         }
     }

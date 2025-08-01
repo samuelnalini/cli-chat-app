@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/server.dir/link.d"
   "CMakeFiles/server.dir/common/src/common.cpp.o"
   "CMakeFiles/server.dir/common/src/common.cpp.o.d"
+  "CMakeFiles/server.dir/common/src/debug.cpp.o"
+  "CMakeFiles/server.dir/common/src/debug.cpp.o.d"
   "CMakeFiles/server.dir/common/src/network_session.cpp.o"
   "CMakeFiles/server.dir/common/src/network_session.cpp.o.d"
   "CMakeFiles/server.dir/server/src/main.cpp.o"

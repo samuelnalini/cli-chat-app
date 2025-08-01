@@ -241,6 +241,33 @@ common/src/common.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/common.cpp.s
 .PHONY : common/src/common.cpp.s
 
+common/src/debug.o: common/src/debug.cpp.o
+.PHONY : common/src/debug.o
+
+# target to build an object file
+common/src/debug.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/debug.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/debug.cpp.o
+.PHONY : common/src/debug.cpp.o
+
+common/src/debug.i: common/src/debug.cpp.i
+.PHONY : common/src/debug.i
+
+# target to preprocess a source file
+common/src/debug.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/debug.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/debug.cpp.i
+.PHONY : common/src/debug.cpp.i
+
+common/src/debug.s: common/src/debug.cpp.s
+.PHONY : common/src/debug.s
+
+# target to generate assembly for a file
+common/src/debug.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/common/src/debug.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/common/src/debug.cpp.s
+.PHONY : common/src/debug.cpp.s
+
 common/src/network_session.o: common/src/network_session.cpp.o
 .PHONY : common/src/network_session.o
 
@@ -338,6 +365,9 @@ help:
 	@echo "... common/src/common.o"
 	@echo "... common/src/common.i"
 	@echo "... common/src/common.s"
+	@echo "... common/src/debug.o"
+	@echo "... common/src/debug.i"
+	@echo "... common/src/debug.s"
 	@echo "... common/src/network_session.o"
 	@echo "... common/src/network_session.i"
 	@echo "... common/src/network_session.s"
