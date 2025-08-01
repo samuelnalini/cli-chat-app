@@ -7,21 +7,21 @@ CLI Chat App is a simple command line application that allows communication betw
 
 *Please see considerations before attempting to use this!*
 
-### INSTRUCTIONS:
+### HELP SECTION:
 
 The project is split up into two separate executables. The server listens to instructions and forwards messages to the clients connected to it.
 The client on the other hand connects to the server and is what users interact with. They are able to input messages which get sent to the server.
 
-### - DEPENDENCIES
+### DEPENDENCIES
 
 There are some requirements to run this project.
 
-`cd build` (create the directory if it doesn't exist)
 `sudo apt update`
+
 `sudo apt install build-essential cmake curl git unzip pkg-config autoconf automake libtool zip libncurses-dev libsodium-dev`
 
 
-### - BUILD INSTRUCTIONS
+### BUILD INSTRUCTIONS
 
 Building the project is a simple process.
 
@@ -29,7 +29,7 @@ First, clone the repo:
 
 `git clone --recurse-submodules -j8 https://github.com/samuelnalini/cli-chat-app.git`
 
-Then cd into the project directory then to the build directory (create it if it doesn't exist)
+Then cd into the project directory and then to the build folder (create it if it doesn't exist)
 
 `cd cli-chat-app/build`
 
@@ -39,7 +39,7 @@ Run:
 
 then
 
-`make`
+`sudo make`
 
 If you have any problems with this part, see the DEPENDENCIES section.
 
