@@ -41,7 +41,21 @@ then
 
 `sudo make`
 
-If you have any problems with this part, see the DEPENDENCIES section.
+
+*If you have any problems with this part, see the DEPENDENCIES section.*
+
+
+#### Changing the default IP and port
+
+By default, both the server and the client are set to run on `127.0.0.1 on port 8080`.
+
+This is useful for LAN connections, but not so much for public use. If you'd like to specify the IP or port you can do so by running the following:
+
+`server <ip> <port>`
+`client <ip> <port>`
+
+*NOTE: If you specify the server IP or port you must do the same for the client, otherwise they won't be able to communicate.
+Also, if you want to specify either the port or the IP you MUST specify both, even if they are the same as the default.*
 
 
 #### - SERVER INSTRUCTIONS
@@ -60,6 +74,8 @@ It will then initialize and begin listening on the specified port.
 
 The client is very similar to the server. It runs on the same IP and port to be able to communicate with it.
 
+**THE SERVER MUST BE RUNNING IN ORDER FOR THE CLIENT TO CONNECT**
+
 You can run the client as an executable:
 
 (chat-app/build) `./client`
@@ -70,21 +86,10 @@ or
 
 It will prompt the user to pick a username and then join the chat.
 
-#### Changing the default IP and port
-
-By default, both the server and the client are set to run on `127.0.0.1 on port 8080`
-This is useful for LAN connections, but not so much for public use. If you'd like to specify the IP or port you can do so by running the following:
-
-`server 127.0.0.1 1234`
-`client 127.0.0.1 1234`
-
-*NOTE: If you specify the server IP or port you must do the same for the client, otherwise they won't be able to communicate.
-Also, if you want to specify either the port or the IP you MUST specify both, even if they are the same as the default.*
-
 
 ### CONSIDERATIONS:
 
-*NOTE: As of right now, messages are **NOT ENCRYPTED!** This means that this app is not secure and others may be able to read chat logs. Do not use this for any real work. You have been warned.*
+*NOTE: As of right now, messages are **NOT ENCRYPTED!** This means that this app is **not secure** and others may be able to read chat logs. Do not use this for any real work. You have been warned.*
 
 *NOTE: This was designed to run on Linux machines! The socket code for other platforms are slightly different and will not work without modification!*
 
@@ -93,6 +98,7 @@ Also, if you want to specify either the port or the IP you MUST specify both, ev
 ### THINGS I'VE LEARNED THROUGH THIS PROJECT:
   - User input
   - CMake Build Tools
+  - Networking through sockets and packets
   - TCP Socket Implementation
   - Basic Client/Server Architecture
   - The use of threads, multithreading and thread safety
