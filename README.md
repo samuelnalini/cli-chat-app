@@ -25,7 +25,13 @@ There are some requirements to run this project.
 
 Building the project is a simple process.
 
-Again, make sure you're in the `build` directory
+First, clone the repo:
+
+`git clone --recurse-submodules -j8 https://github.com/samuelnalini/cli-chat-app.git`
+
+Then cd into the project directory then to the build directory (create it if it doesn't exist)
+
+`cd cli-chat-app/build`
 
 Run:
 

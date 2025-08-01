@@ -122,6 +122,7 @@ void Server::HandleClientSession(std::unique_ptr<NetworkSession> session)
        std::string logStr{ username + " has connected" };
        m_debugger.Log(logStr.c_str());
        std::cout << logStr << '\n';
+       BroadcastMessage(logStr);
    }
    // Client main loop
 
@@ -147,6 +148,7 @@ void Server::HandleClientSession(std::unique_ptr<NetworkSession> session)
        std::string logStr{ username + " has disconnected" };
        m_debugger.Log(logStr.c_str());
        std::cout << logStr << '\n';
+       BroadcastMessage(logStr);
    }
 }
 
