@@ -9,10 +9,7 @@ NetworkSession::NetworkSession(int socketfd)
     : m_socketfd(socketfd)
 {}
 
-NetworkSession::~NetworkSession()
-{
-    //CloseSession();
-}
+NetworkSession::~NetworkSession() = default;
 
 bool NetworkSession::SendPacket(const std::string& data)
 {

@@ -2,9 +2,7 @@
 
 #include "ncursesUI.hpp"
 #include "network_session.hpp"
-#include "common.hpp"
 #include "debug.hpp"
-
 #include <string>
 #include <vector>
 #include <thread>
@@ -27,23 +25,23 @@ private:
     Debugger m_debugger;
 
     std::vector<std::thread> m_threadPool;
-    std::thread m_uiThread;
 
     std::string m_ip;
     int         m_port;
 
     std::string m_username;
 
+    std::atomic<bool> m_stopping{ false };
     std::atomic<bool> m_running{ false };
     std::atomic<bool> m_uiActive{ false };
     std::string       m_exitReason{ "None" };
     std::mutex        m_netMutex;
 
 private:
-    void CreateSession();
+    bool CreateSession();
     void CloseSession();
 
     void ClientLoop();
     void UIUpdateLoop();
-    void HandleBroadcast(const std::string& username);
+    void HandleBroadcast();
 };

@@ -1,17 +1,19 @@
 #include "headers/ncursesUI.hpp"
 #include <ncurses.h>
 #include <optional>
-#include <thread>
 
-NcursesUI::NcursesUI()
+NcursesUI::NcursesUI(Debugger& debugger)
     : m_msgWin(nullptr)
     , m_inputWin(nullptr)
+    , m_debugger(&debugger)
 {}
 
 NcursesUI::~NcursesUI() {}
 
 void NcursesUI::Init()
 {
+    m_debugger->Log("Initializing UI...");
+
     initscr();
     cbreak();
     noecho();
@@ -32,13 +34,13 @@ void NcursesUI::Init()
     wrefresh(m_msgWin);
     wrefresh(m_inputWin);
     running = true;
+
+    m_debugger->Log("UI Initialized");
 }
 
 void NcursesUI::Cleanup()
 {
     running = false;
-    //std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
     if (m_msgWin)
         delwin(m_msgWin);
 
@@ -57,7 +59,9 @@ bool NcursesUI::GetInputChar(int& ch)
     ch = wgetch(m_inputWin);
     
     if (ch == ERR)
+    {
         return false;
+    }
 
     return true;
 }
@@ -75,12 +79,12 @@ void NcursesUI::PrintBufferedMessages()
 {
     if (!running)
         return;
-
+    
     std::unique_lock<std::mutex> lock(m_mutex, std::defer_lock);
     std::unique_lock<std::mutex> lock2(m_queueMutex, std::defer_lock);
 
     std::lock(lock, lock2);
-
+    
     bool printed{ false };
 
     while (!m_msgQueue.empty())
@@ -128,15 +132,21 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
     wmove(m_inputWin, 1, startX);
     wrefresh(m_inputWin);
 
-    int ch;
-    while ((ch = wgetch(m_inputWin)) != '\n')
+    int ch{};
+
+    m_debugger->Log("Input prompted");
+    while (true)
     {
+        ch = wgetch(m_inputWin);
+        if (ch == '\n')
+            break;
+
         if (ch == KEY_BACKSPACE || ch == 127 || ch == '\b')
         {
             if (!input.empty())
             {
                 input.pop_back();
-                mvwprintw(m_inputWin, 1, startX, std::string(m_cols - startX - 1, ' ').c_str());
+                mvwprintw(m_inputWin, 1, startX, "%s", std::string(m_cols - startX - 1, ' ').c_str());
                 mvwprintw(m_inputWin, 1, startX, "%s", input.c_str());
                 wmove(m_inputWin, 1, startX + input.length());
                 wrefresh(m_inputWin);
@@ -150,5 +160,6 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
         wrefresh(m_inputWin);
     }
 
+    m_debugger->Log(input.c_str());
     return input;
 }

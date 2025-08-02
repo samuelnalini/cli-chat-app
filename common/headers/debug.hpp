@@ -12,6 +12,7 @@ public:
     ~Debugger();
 
     bool Log(const char* msg);
+    bool Log(bool val);
     void Start();
     void Stop();
     bool FileWrite();

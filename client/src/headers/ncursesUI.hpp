@@ -1,5 +1,7 @@
 #pragma once
 
+#include "debug.hpp"
+
 #include <ncurses.h>
 #include <string>
 #include <mutex>
@@ -10,7 +12,7 @@
 class NcursesUI
 {
 public:
-    NcursesUI();
+    NcursesUI(Debugger& debugger);
     ~NcursesUI();
 
     void Init();
@@ -34,6 +36,8 @@ private:
 
     std::queue<std::string> m_msgQueue;
     std::mutex m_queueMutex;
+
+    Debugger* m_debugger;
 
     static const int INPUT_HEIGHT = 3;
 };

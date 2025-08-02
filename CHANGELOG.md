@@ -1,3 +1,14 @@
+# 0.3.2 - Stability improvements
+    MISC
+    [-] Improved code readability
+    [-] Improved error handling
+    [-] Debugger overloaded functions for boolean logging
+    [-] Debugger improved performance
+    [-] Improved thread safety
+    [-] Further checks to prevent memory leaks
+    [-] Improved user input stability
+    [-] Minor refactors
+
 # 0.3.1 - Debugger update
     ADDITIONS
     [+] Added a debugger class to allow for more robust logging
