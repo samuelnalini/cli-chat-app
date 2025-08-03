@@ -3,18 +3,15 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <thread>
 
 Debugger::Debugger(const char* path)
     : m_filePath(path)
 {}
 
-Debugger::~Debugger() = default;
-
 void Debugger::Start()
 {
     m_running = true; 
-    m_debugThread = std::thread(&Debugger::Loop, this); 
+    //m_debugThread = std::thread(&Debugger::Loop, this); 
     Log("[*] Debugger started");
 }
 
@@ -25,14 +22,18 @@ void Debugger::Stop()
     
     Log("[!] Debugger stopped");
     m_running = false;
-    if (m_debugThread.joinable())
+    /*if (m_debugThread.joinable())
         m_debugThread.join();
+    */
 
     FileWrite();
 }
 
 bool Debugger::Log(const char* msg)
 {
+    if (true)
+        return true;
+
     if (!m_running)
         return false;
 
@@ -53,9 +54,9 @@ bool Debugger::Log(bool val)
 bool Debugger::FileWrite()
 {
     std::lock_guard<std::mutex> lock(m_logMutex);
-    std::fstream file(m_filePath, std::ios::app | std::ios::trunc | std::ios::out);
+    std::ofstream file(m_filePath, std::ios::app | std::ios::trunc | std::ios::out);
 
-    if (!file)
+    if (!file.is_open())
     {
         //std::cerr << "Failed to open file" << m_filePath << '\n';
         return false;
@@ -72,13 +73,14 @@ bool Debugger::FileWrite()
 }
 
 void Debugger::Loop()
-{
+{/*
     while (m_running)
     {
         if (!m_logQueue.empty() && m_running)
             FileWrite();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        if (m_running)
+            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     }
     
-}
+*/}

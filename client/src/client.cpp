@@ -119,11 +119,11 @@ void Client::Stop()
     m_uiActive = false;
 
     m_debugger.Log("[!] Client stopped");
-
+ 
     m_debugger.Stop();
-    
     m_ui.Cleanup();
     CloseSession();
+
 
     if (m_exitReason != "None")
     {

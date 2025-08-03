@@ -26,7 +26,7 @@ find_package(Curses REQUIRED)
 add_executable(server
     ${SERVER_SOURCES}/main.cpp
     ${SERVER_SOURCES}/server.cpp
-    ${COMMON_SOURCES}/common.cpp
+    # ${COMMON_SOURCES}/common.cpp
     ${COMMON_SOURCES}/network_session.cpp
     ${COMMON_SOURCES}/debug.cpp
 )
@@ -44,7 +44,7 @@ add_executable(client
     ${CLIENT_SOURCES}/main.cpp
     ${CLIENT_SOURCES}/client.cpp
     ${CLIENT_SOURCES}/ncursesUI.cpp
-    ${COMMON_SOURCES}/common.cpp
+    # ${COMMON_SOURCES}/common.cpp
     ${COMMON_SOURCES}/network_session.cpp
     ${COMMON_SOURCES}/debug.cpp
 )

@@ -1,3 +1,11 @@
+# 0.3.3 - Network optimization
+    REMOVED
+    [-] common.cpp became redundant after network_session was added
+    
+    MISC
+    [-] Network packets sent have been reduced by half!
+    [-] Switched port from int to uint16_t
+
 # 0.3.2 - Stability improvements
     MISC
     [-] Improved code readability

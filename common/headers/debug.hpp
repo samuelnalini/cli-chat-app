@@ -2,14 +2,12 @@
 
 #include <filesystem>
 #include <queue>
-#include <thread>
 #include <mutex>
 
 typedef class Debugger
 {
 public:
     explicit Debugger(const char* path);
-    ~Debugger();
 
     bool Log(const char* msg);
     bool Log(bool val);
@@ -22,7 +20,6 @@ private:
     std::queue<const char*> m_logQueue;
     std::mutex m_logMutex;
 
-    std::thread m_debugThread;
     bool m_running{ false };
 
 private:

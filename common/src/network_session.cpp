@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <string.h>
 
 NetworkSession::NetworkSession(int socketfd)
     : m_socketfd(socketfd)
@@ -16,6 +17,15 @@ bool NetworkSession::SendPacket(const std::string& data)
     uint32_t len{ static_cast<uint32_t>(data.size()) };
     uint32_t netLen{ htonl(len) };
 
+    std::string buffer(sizeof netLen + data.size(), '\0');
+
+    memcpy(buffer.data(), &netLen, sizeof netLen);
+    memcpy(buffer.data() + sizeof netLen, data.data(), data.size());
+
+    if (send_all(m_socketfd, buffer.data(), buffer.size(), 0) < 0)
+        return false;
+
+    /*
     // Length header
     if (send_all(m_socketfd, reinterpret_cast<char*>(&netLen), sizeof netLen, 0) < 0)
     {
@@ -27,6 +37,8 @@ bool NetworkSession::SendPacket(const std::string& data)
     {
         return false;
     }
+
+    */
 
     return true;
 }
@@ -81,4 +93,51 @@ void NetworkSession::CloseSession()
 int NetworkSession::GetSocket() const
 {
     return m_socketfd;
+}
+
+ssize_t recv_all(int fd, char* buf, size_t bufSize, int flags)
+{
+    size_t totalReceived{ 0 };
+
+    while (totalReceived < bufSize)
+    {
+        ssize_t bytes{ recv(fd, buf + totalReceived, bufSize - totalReceived, flags) };
+        
+        if (bytes == 0)
+        {
+            break;
+        }
+
+        if (bytes < 0)
+        {
+            perror("recv error");
+            return -1;
+        }
+
+        totalReceived += bytes;
+    }
+
+    return totalReceived;
+}
+
+ssize_t send_all(int fd, char* buf, size_t bufSize, int flags)
+{
+    size_t totalSent{ 0 };
+
+    while (totalSent < bufSize)
+    {
+        ssize_t bytes{ send(fd, buf + totalSent, bufSize - totalSent, flags) };
+
+        if (bytes <= 0)
+        {
+            if (bytes < 0)
+                perror("send error");
+
+            return -1;
+        }
+
+        totalSent += bytes;
+    }
+
+    return totalSent;
 }

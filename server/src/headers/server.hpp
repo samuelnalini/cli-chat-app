@@ -11,18 +11,16 @@
 #include <mutex>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <stdint.h>
 
 class Server
 {
 public:
-    Server(std::string ip = "127.0.0.1", int port = 8080);
+    Server(std::string ip = "127.0.0.1", uint16_t port = 8080);
     ~Server();
 
     void Start();
     void Stop();
-
-    const int MAX_MESSAGE_LEN{ 4096 };
-    const int MAX_USERNAME_LEN{ 24 };
 
 private:
     int m_listenfd{ -1 };
@@ -34,7 +32,7 @@ private:
     Debugger m_debugger;
 
     std::string m_ip;
-    int m_port;
+    uint16_t m_port;
     bool m_running{ false };
 
 private:

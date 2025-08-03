@@ -5,8 +5,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <iostream>
+#include <stdint.h>
 
-Server::Server(std::string ip, int port)
+Server::Server(std::string ip, uint16_t port)
     : m_ip(std::move(ip))
     , m_port(port)
     , m_debugger("server_log.txt")
