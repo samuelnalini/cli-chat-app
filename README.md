@@ -31,33 +31,40 @@ First, clone the repo:
 git clone --recurse-submodules -j8 https://github.com/samuelnalini/cli-chat-app.git
 ```
 
-Then cd into the project directory and then to the build folder (create it if it doesn't exist)
+Create a build directory
 
 ```
-cd cli-chat-app/build
+cd cli-chat-app && mkdir -p build && cd build
 ```
+
 Run:
 
 ```
-sudo cmake -G "Unix Makefiles" ..
-sudo make
+cmake -G "Unix Makefiles" ..
+```
+
+```
+make
 ```
 
 *If you have any problems with this part, see the [DEPENDENCIES](#dependencies) section.*
 
 
-### Changing the default IP and port
+### Specifying IP and Port
 
-By default, both the server and the client are set to run on `127.0.0.1 on port 8080`.
+**Server**
 
-This is useful for LAN connections, but not so much for public use. If you'd like to specify the IP or port you can do so by running the following:
+By default the server will listen on `port 8080`
 
-`server <ip> <port>`
+You can change this when starting the server by specifying `./server <port>`
 
-`client <ip> <port>`
+**Client**
 
-*NOTE: If you specify the server IP or port you must do the same for the client, otherwise they won't be able to communicate.
-Also, if you want to specify either the port or the IP you MUST specify both, even if they are the same as the default.*
+The client will connect to localhost by default. `127.0.0.1 on port 8080`
+
+You can change this when starting the client by specifying `./client <ip> <port>`
+
+*Connections to outside servers are possible, but please see [CONSIDERATIONS](#considerations)!*
 
 
 ## SERVER INSTRUCTIONS
@@ -74,7 +81,7 @@ It will then initialize and begin listening on the specified port.
 
 ## CLIENT INSTRUCTIONS
 
-The client is very similar to the server. It runs on the same IP and port to be able to communicate with it.
+The client is very similar to the server, but must specify an IP and port in order to communicate with a server.
 
 ### THE SERVER MUST BE RUNNING IN ORDER FOR THE CLIENT TO CONNECT
 
@@ -88,6 +95,13 @@ or
 
 It will prompt the user to pick a username and then join the chat.
 
+## CLIENT COMMANDS
+
+The client is able to send special commands to the server by prefixing them with `/`
+
+As of right now, there is only the `/exit` command, which will exit the server.
+
+Not very exciting, but more commands will be added in the future.
 
 ### CONSIDERATIONS:
 
@@ -106,5 +120,6 @@ It will prompt the user to pick a username and then join the chat.
   - TCP Socket Implementation
   - Basic Client/Server Architecture
   - The use of threads, multithreading and thread safety
+  - epoll() and event-based systems.
   - Debugging skills
   - Development in Linux

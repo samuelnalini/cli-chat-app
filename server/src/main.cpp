@@ -6,20 +6,20 @@
 int main(int argc, char* argv[])
 {
     
-    if (argc < 3)
+    if (argc < 2)
     {
         Server server;
         server.Start();
     } else
     {
 
-        if (!std::stoi(argv[2]))
+        if (!std::stoi(argv[1]))
         {
-            std::cerr << "Usage: server <ip> <port>\n";
+            std::cerr << "Usage: server <port>\n";
             return 1;
         }
 
-        Server server(argv[1], std::stoi(argv[2]));
+        Server server(std::stoi(argv[1]));
         server.Start();
     }
 

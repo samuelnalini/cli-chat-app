@@ -5,10 +5,10 @@
 
 #include <string>
 #include <unistd.h>
-#include <thread>
-#include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <mutex>
+#include <sys/epoll.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <stdint.h>
@@ -16,27 +16,36 @@
 class Server
 {
 public:
-    Server(std::string ip = "127.0.0.1", uint16_t port = 8080);
+    Server(uint16_t port = 8080);
     ~Server();
 
     void Start();
     void Stop();
 
 private:
-    int m_listenfd{ -1 };
+    struct ClientInfo
+    {
+        std::unique_ptr<NetworkSession> session;
+        std::string username;
+        bool registered{ false };
+    };
 
-    std::unordered_map<std::string, std::unique_ptr<NetworkSession>> m_clientSessions;
+    std::unordered_map<int, ClientInfo> m_clients;
+    std::unordered_set<std::string> m_usernames;
     std::mutex m_clientsMutex;
 
-    std::vector<std::thread> m_threadpool;
+    int m_listenfd{ -1 };
+    int m_epollfd{ -1 };
+
+    uint16_t m_port;
     Debugger m_debugger;
 
-    std::string m_ip;
-    uint16_t m_port;
     bool m_running{ false };
-
 private:
-    void ServerLoop();
-    void HandleClientSession(std::unique_ptr<NetworkSession> session);
+    void SetupListener();
+    void SetNonBlocking(int fd);
+    void EventLoop();
+    void HandleNewConnection();
+    void HandleClientEvent(int fd, uint32_t events);
     void BroadcastMessage(const std::string& msg);
 };

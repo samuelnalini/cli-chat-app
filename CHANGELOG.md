@@ -1,3 +1,15 @@
+# 0.3.4 - Server updates
+    CHANGES
+    [-] The server now uses epoll() instead of threads
+    [-] Switched the server to an event based system.
+    [-] Refactored parts of the server for efficiency
+
+    MISC
+    [-] The server no longer takes in an IP as an argument
+        - Instead, you should only specify `./server <port = 8080>`
+    [-] Updated the usage to reflect changes
+    [-] Updated README.md to reflect changes
+
 # 0.3.3 - Network optimization
     REMOVED
     [-] common.cpp became redundant after network_session was added

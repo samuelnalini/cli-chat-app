@@ -25,21 +25,6 @@ bool NetworkSession::SendPacket(const std::string& data)
     if (send_all(m_socketfd, buffer.data(), buffer.size(), 0) < 0)
         return false;
 
-    /*
-    // Length header
-    if (send_all(m_socketfd, reinterpret_cast<char*>(&netLen), sizeof netLen, 0) < 0)
-    {
-        return false;
-    }
-
-    // Data payload
-    if (send_all(m_socketfd, const_cast<char*>(data.data()), data.size(), 0) < 0)
-    {
-        return false;
-    }
-
-    */
-
     return true;
 }
 
