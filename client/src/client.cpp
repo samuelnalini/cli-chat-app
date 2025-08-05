@@ -25,7 +25,7 @@ Client::~Client()
     if (m_running)
     {
         m_exitReason = "Abrupt exit -> attempting graceful shutdown";
-        Stop();
+        Stop(true);
     }
 };
 
@@ -136,11 +136,11 @@ void Client::Start()
     {
         Debug::Log(e.what());
         m_exitReason = e.what();
-        Stop();
+        Stop(true);
     }
 }
 
-void Client::Stop()
+void Client::Stop(bool dumpLog)
 {
     if (m_stopping)
     {
@@ -162,8 +162,10 @@ void Client::Stop()
 
         Debug::Log("Client exited: " + m_exitReason, Debug::LOG_LEVEL::ERROR);
         std::cout << "Exited: " << m_exitReason << '\n';
-        Debug::DumpToFile("log.txt");
     }
+
+    if (dumpLog)
+        Debug::DumpToFile("log.txt");
 
     exit((m_exitReason == "None") ? 0 : 1);
 }

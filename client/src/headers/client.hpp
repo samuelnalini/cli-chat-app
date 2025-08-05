@@ -2,7 +2,6 @@
 
 #include "ncursesUI.hpp"
 #include "network_session.hpp"
-#include "debug.hpp"
 #include <sodium/crypto_box.h>
 #include <sodium/crypto_secretbox.h>
 #include <string>
@@ -19,7 +18,7 @@ public:
     ~Client();
 
     void Start();
-    void Stop();
+    void Stop(bool dumpLog = false);
 
 private:
     std::unique_ptr<NetworkSession> m_session;

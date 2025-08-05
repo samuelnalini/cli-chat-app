@@ -21,7 +21,7 @@ public:
     ~Server();
 
     void Start();
-    void Stop();
+    void Stop(bool dumpLog = false);
 
 private:
     struct ClientInfo

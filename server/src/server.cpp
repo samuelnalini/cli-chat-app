@@ -35,7 +35,7 @@ Server::Server(uint16_t port)
 
 Server::~Server()
 {
-    Stop();
+    Stop(true);
 }
 
 void Server::SetNonBlocking(int fd)
@@ -53,7 +53,7 @@ void Server::SetupListener()
     {
         Debug::Log("Failed to create socket", Debug::LOG_LEVEL::ERROR);
         perror("socket()");
-        exit(1);
+        Stop(true);
     }
 
     std::cout << Style::style("PASS\n", {Style::STYLE_TYPE::GREEN, Style::STYLE_TYPE::BOLD});
@@ -73,13 +73,13 @@ void Server::SetupListener()
         Debug::Log("Failed to bind socket", Debug::LOG_LEVEL::ERROR);
         perror("bind()");
         close(m_listenfd);
-        exit(1);
+        Stop(true);
     }
 
     if (listen(m_listenfd, SOMAXCONN) < 0)
     {
         perror("listen()");
-        exit(1);
+        Stop(true);
     }
     
     std::cout << Style::style("PASS\n", {Style::STYLE_TYPE::GREEN, Style::STYLE_TYPE::BOLD});
@@ -95,7 +95,7 @@ void Server::SetupListener()
     {
         Debug::Log("epoll() error", Debug::LOG_LEVEL::ERROR);
         perror("epoll_create1()");
-        exit(1);
+        Stop(true);
     }
 
     epoll_event ev;
@@ -118,7 +118,7 @@ void Server::Start()
     EventLoop();
 }
 
-void Server::Stop()
+void Server::Stop(bool dumpLog)
 {
     if (!m_running)
         return;
@@ -148,6 +148,9 @@ void Server::Stop()
 
     m_clients.clear();
     m_usernames.clear();
+
+    if (dumpLog)
+        Debug::DumpToFile("serverlog.txt");
 }
 
 void Server::EventLoop()
@@ -168,6 +171,7 @@ void Server::EventLoop()
         {
             Debug::Log("epoll_wait() error", Debug::LOG_LEVEL::ERROR);
             perror("epoll_wait()");
+            Stop(true);
             break;
         }
 
