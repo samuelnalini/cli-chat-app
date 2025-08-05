@@ -18,6 +18,7 @@ void NcursesUI::Init()
     m_debugger->Log("Initializing UI...");
 
     setlocale(LC_ALL, "");
+    start_color();
     initscr();
     cbreak();
     noecho();
@@ -34,6 +35,10 @@ void NcursesUI::Init()
 
     keypad(m_inputWin, TRUE);
     nodelay(m_inputWin, TRUE);
+
+    init_pair(COLOR_RED, COLOR_BLACK, 1);
+    init_pair(COLOR_GREEN, COLOR_BLACK, 2);
+    init_pair(COLOR_BLUE, COLOR_BLACK, 3);
 
     wrefresh(m_msgWin);
     wrefresh(m_inputWin);

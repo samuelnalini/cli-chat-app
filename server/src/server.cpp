@@ -1,4 +1,5 @@
 #include "headers/server.hpp"
+#include "style.hpp"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -32,12 +33,16 @@ void Server::SetNonBlocking(int fd)
 
 void Server::SetupListener()
 {
+
+    std::cout << "==> Creating socket... ";
     m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if (m_listenfd < 0)
     {
         perror("socket()");
         exit(1);
     }
+
+    std::cout << Style::style("PASS\n", {Style::STYLE_TYPE::GREEN, Style::STYLE_TYPE::BOLD});
 
     int opt{ 1 };
     setsockopt(m_listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof opt);
@@ -47,6 +52,8 @@ void Server::SetupListener()
     addr.sin_port = htons(m_port);
     addr.sin_addr.s_addr = INADDR_ANY;
 
+
+    std::cout << "==> Binding... ";
     if (bind(m_listenfd, (sockaddr*) &addr, sizeof addr) < 0)
     {
         perror("bind()");
@@ -59,9 +66,15 @@ void Server::SetupListener()
         perror("listen()");
         exit(1);
     }
+    
+    std::cout << Style::style("PASS\n", {Style::STYLE_TYPE::GREEN, Style::STYLE_TYPE::BOLD});
 
     SetNonBlocking(m_listenfd);
 
+
+    std::cout << Style::style("STARTING EVENT HANDLER\n", {Style::STYLE_TYPE::RED});
+
+    std::cout << "==> Setting up epoll... ";
     m_epollfd = epoll_create1(0);
     if (m_epollfd < 0)
     {
@@ -73,8 +86,8 @@ void Server::SetupListener()
     ev.events = EPOLLIN;
     ev.data.fd = m_listenfd;
     epoll_ctl(m_epollfd, EPOLL_CTL_ADD, m_listenfd, &ev);
-    
-    std::cout << "Listening on port " << m_port << '\n';
+
+    std::cout << Style::style("PASS\n", {Style::STYLE_TYPE::GREEN, Style::STYLE_TYPE::BOLD});
 }
 
 void Server::Start()
@@ -82,8 +95,7 @@ void Server::Start()
     if (m_running)
         return;
     
-    std::cout << "Starting server...\n";
-
+    std::cout << Style::style("STARTING SERVER\n", {Style::STYLE_TYPE::RED});
     m_running = true;
     SetupListener();
     EventLoop();
@@ -94,6 +106,8 @@ void Server::Stop()
     if (!m_running)
         return;
 
+
+    std::cout << Style::style("STOPPING SERVER\n", {Style::STYLE_TYPE::BRIGHT_RED, Style::STYLE_TYPE::BOLD});
     m_running = false;
 
     if (m_listenfd != -1)
@@ -101,6 +115,7 @@ void Server::Stop()
         shutdown(m_listenfd, SHUT_RDWR);
         close(m_listenfd);
         m_listenfd = -1;
+        std::cout << "Client sock: closed\n";
     }
 
     if (m_epollfd != -1)
@@ -108,6 +123,7 @@ void Server::Stop()
         shutdown(m_epollfd, SHUT_RDWR);
         close(m_epollfd);
         m_epollfd = -1;
+        std::cout << "Event handler: stopped\n";
     }
 
     m_clients.clear();
@@ -117,6 +133,12 @@ void Server::Stop()
 void Server::EventLoop()
 {
     epoll_event events[MAX_EXENTS];
+   
+    std::cout << Style::style("SERVER STARTED\n", {Style::STYLE_TYPE::GREEN, Style::STYLE_TYPE::BOLD});
+    std::cout << "RUNNING ON PORT ";
+    std::cout << Style::style(std::to_string(m_port) + '\n', {Style::STYLE_TYPE::BOLD});
+
+    std::cout << Style::style("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", {Style::STYLE_TYPE::STRIKETHROUGH});
 
     while (m_running)
     {
@@ -199,7 +221,11 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         std::string user{ client.username };
         m_clients.erase(it);
         if (client.registered)
-            BroadcastMessage(user + " has disconnected");
+        {
+            BroadcastMessage(client.username + " has disconnected");
+            std::cout << client.username + " has " + Style::red("disconnected\n");
+        }
+
         return;
     }
 
@@ -225,6 +251,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         client.username = std::move(uname);
         client.registered = true;
         BroadcastMessage(client.username + " has connected");
+        std::cout << client.username + " has " + Style::green("connected\n");
     } else if (!dataOpt->empty())
     {
         BroadcastMessage(client.username + ": " + *dataOpt);

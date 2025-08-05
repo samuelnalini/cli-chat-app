@@ -1,3 +1,15 @@
+# 0.3.5 - UTF-8 & terminal colors
+    ADDITIONS
+    [+] UTF-8 submodule
+    [+] UTF-8 compatibility
+    [+] Style class
+
+    MISC
+    [-] Input optimizations
+    [-] The server module is now more verbose
+    [-] Added startup tests
+    [-] The server module now displays terminal colors
+
 # 0.3.4 - Server updates
     CHANGES
     [-] The server now uses epoll() instead of threads
