@@ -3,9 +3,10 @@
 #include <string>
 #include <iostream>
 
+Client* clientPtr;
+
 int main(int argc, char* argv[])
 {
-
     if (argc < 3)
     {
         Client client;

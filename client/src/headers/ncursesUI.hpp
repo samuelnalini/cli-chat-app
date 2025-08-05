@@ -12,7 +12,7 @@
 class NcursesUI
 {
 public:
-    NcursesUI(Debugger& debugger);
+    NcursesUI();
     ~NcursesUI();
 
     void Init();
@@ -36,8 +36,6 @@ private:
 
     std::queue<std::string> m_msgQueue;
     std::mutex m_queueMutex;
-
-    Debugger* m_debugger;
 
     static const int INPUT_HEIGHT = 3;
 };

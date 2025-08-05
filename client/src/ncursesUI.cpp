@@ -1,21 +1,21 @@
 #include "headers/ncursesUI.hpp"
 #include "utf8.h"
+#include "debug.hpp"
 
 #include <ncurses.h>
 #include <locale.h>
 #include <optional>
 
-NcursesUI::NcursesUI(Debugger& debugger)
+NcursesUI::NcursesUI()
     : m_msgWin(nullptr)
     , m_inputWin(nullptr)
-    , m_debugger(&debugger)
 {}
 
 NcursesUI::~NcursesUI() {}
 
 void NcursesUI::Init()
 {
-    m_debugger->Log("Initializing UI...");
+    //Debug::Log("Initializing UI...");
 
     setlocale(LC_ALL, "");
     start_color();
@@ -44,7 +44,7 @@ void NcursesUI::Init()
     wrefresh(m_inputWin);
     running = true;
 
-    m_debugger->Log("UI Initialized");
+    //Debug::Log("UI Initialized");
 }
 
 void NcursesUI::Cleanup()

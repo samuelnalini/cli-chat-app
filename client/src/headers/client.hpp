@@ -30,7 +30,6 @@ private:
     unsigned char m_group_key[crypto_secretbox_KEYBYTES];
 
     NcursesUI m_ui;
-    Debugger m_debugger;
 
     std::vector<std::thread> m_threadPool;
 

@@ -17,33 +17,36 @@
 Client::Client(std::string ip, int port)
     : m_ip(std::move(ip))
     , m_port(port)
-    , m_debugger("log.txt")
-    , m_ui(m_debugger)
+    , m_ui()
 {}
 
-Client::~Client() = default;
+Client::~Client()
+{
+    if (m_running)
+    {
+        m_exitReason = "Abrupt exit -> attempting graceful shutdown";
+        Stop();
+    }
+};
 
 void Client::Start()
 {
     if (m_running)
         return;
 
-
     try
     {
         if (!CreateSession())
         {
+            Debug::Log("Failed to create session -> stopping", Debug::LOG_LEVEL::ERROR);
             std::cout << "Failed to create session, stopping\n";
             Stop();
         }
         
-        m_debugger.Start();
-
         m_uiActive = true;
         m_ui.Init();
         
-        m_debugger.Log("[*] Client started...");
-
+        Debug::Log("[*] Client started...");
 
         // Encryption Handshake
 
@@ -82,7 +85,6 @@ void Client::Start()
         if (!usernameOpt.has_value() || usernameOpt->empty() || usernameOpt->length() > MAX_USERNAME_LEN)
         {
             std::string logStr{ "Invalid username " + *usernameOpt };
-            m_debugger.Log(logStr.c_str());
             throw std::runtime_error("Invalid username");
         }
 
@@ -91,14 +93,13 @@ void Client::Start()
         if (!SendEncrypted(username))
         {
             std::string logStr{ "Invalid username " + username };
-            m_debugger.Log(logStr.c_str());
             throw std::runtime_error("Failed to send username");
         }
 
         m_username = username;
         m_running = true;
 
-        m_debugger.Log("Initializing threads...");
+        //Debug::Log("Initializing threads...");
 
         // Threadhandling
         
@@ -108,11 +109,11 @@ void Client::Start()
                     (this->*fn)();
                 } catch (const std::exception& e)
                 {
-                    m_debugger.Log((std::string("Exception in thread: ") + e.what()).c_str());
+                Debug::Log((std::string("Exception in thread: ") + e.what()).c_str());
                     Stop();
                 } catch (...)
                 {
-                    m_debugger.Log("Unknown exception in thread, stopping");
+                Debug::Log("Unknown exception in thread, stopping");
                     Stop();
                 }
             }
@@ -123,7 +124,7 @@ void Client::Start()
         m_threadPool.emplace_back(safe(&Client::ClientLoop));
         m_threadPool.emplace_back(safe(&Client::UIUpdateLoop));
         
-        m_debugger.Log("Threads started");
+        //Debug::Log("Threads started");
 
         for (auto &thr : m_threadPool)
         {
@@ -133,7 +134,7 @@ void Client::Start()
 
     } catch (const std::runtime_error& e)
     {
-        m_debugger.Log(e.what());
+        Debug::Log(e.what());
         m_exitReason = e.what();
         Stop();
     }
@@ -150,16 +151,18 @@ void Client::Stop()
     m_running = false;
     m_uiActive = false;
 
-    m_debugger.Log("[!] Client stopped");
+    //Debug::Log("[!] Client stopped");
  
-    m_debugger.Stop();
     m_ui.Cleanup();
     CloseSession();
 
 
     if (m_exitReason != "None")
     {
+
+        Debug::Log("Client exited: " + m_exitReason, Debug::LOG_LEVEL::ERROR);
         std::cout << "Exited: " << m_exitReason << '\n';
+        Debug::DumpToFile("log.txt");
     }
 
     exit((m_exitReason == "None") ? 0 : 1);
@@ -173,7 +176,6 @@ bool Client::CreateSession()
 
         if (fd < 0)
         {
-            m_debugger.Log("Socket error");
             throw std::runtime_error("Socket creation failed");
             return false;
         }
@@ -187,13 +189,11 @@ bool Client::CreateSession()
         if (inet_pton(AF_INET, m_ip.c_str(), &addr.sin_addr) <= 0)
         {
             std::string logStr{ "Invalid IP address: " + m_ip };
-            m_debugger.Log(logStr.c_str());
             throw std::runtime_error(logStr);    
         }
 
         if (connect(fd, reinterpret_cast<sockaddr*>(&addr), sizeof addr) < 0)
         {
-            m_debugger.Log("Connection failed");   
             throw std::runtime_error("Connection failed");
         }
 
@@ -201,6 +201,7 @@ bool Client::CreateSession()
         return true;
     } catch (const std::runtime_error& e)
     {
+        Debug::Log(e.what());
         m_exitReason = e.what();
         return false;
     }
@@ -259,7 +260,7 @@ std::optional<std::string> Client::RecvDecrypted()
 
     if (ctLen <= crypto_secretbox_MACBYTES)
     {
-        m_debugger.Log("Encrypted message too short for valid decryption");
+        Debug::Log("Encrypted message too short for valid decryption");
         return std::nullopt;
     }
 
@@ -271,7 +272,7 @@ std::optional<std::string> Client::RecvDecrypted()
         m_group_key
     ) != 0)
     {
-        m_debugger.Log("Decryption failed: invalid ciphertext or tampering");
+        Debug::Log("Decryption failed: invalid ciphertext or tampering");
         return std::nullopt;
     }
 
@@ -302,7 +303,6 @@ void Client::ClientLoop()
         SendEncrypted(m_username + ": " + input);
    }
 
-   m_debugger.Log("Exited client loop, stopping");
    Stop();
 }
 
@@ -313,8 +313,6 @@ void Client::UIUpdateLoop()
         m_ui.PrintBufferedMessages();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-
-    m_debugger.Log("Exited UI loop");
 }
 
 void Client::HandleBroadcast()
@@ -333,7 +331,6 @@ void Client::HandleBroadcast()
         if (msg == "SERVER::USERNAME_TAKEN")
         {
             std::string logStr{ "Username " + m_username + " is already taken" };
-            m_debugger.Log(logStr.c_str());
             m_exitReason = "Username already taken";
             Stop();
             break;
@@ -341,6 +338,4 @@ void Client::HandleBroadcast()
 
         m_ui.PushMessage(msg);
     }
-
-    m_debugger.Log("Exited broadcast loop");
 }

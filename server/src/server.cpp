@@ -1,5 +1,6 @@
 #include "headers/server.hpp"
 #include "style.hpp"
+#include "debug.hpp"
 
 #include <arpa/inet.h>
 #include <cerrno>
@@ -15,12 +16,12 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <string.h>
+#include <vector>
 
 constexpr int MAX_EXENTS{ 64 };
 
 Server::Server(uint16_t port)
     : m_port(port)
-    , m_debugger("server_log.txt")
 {
     if (sodium_init() < 0)
     {
@@ -50,6 +51,7 @@ void Server::SetupListener()
     m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if (m_listenfd < 0)
     {
+        Debug::Log("Failed to create socket", Debug::LOG_LEVEL::ERROR);
         perror("socket()");
         exit(1);
     }
@@ -68,6 +70,7 @@ void Server::SetupListener()
     std::cout << "==> Binding... ";
     if (bind(m_listenfd, (sockaddr*) &addr, sizeof addr) < 0)
     {
+        Debug::Log("Failed to bind socket", Debug::LOG_LEVEL::ERROR);
         perror("bind()");
         close(m_listenfd);
         exit(1);
@@ -90,6 +93,7 @@ void Server::SetupListener()
     m_epollfd = epoll_create1(0);
     if (m_epollfd < 0)
     {
+        Debug::Log("epoll() error", Debug::LOG_LEVEL::ERROR);
         perror("epoll_create1()");
         exit(1);
     }
@@ -107,6 +111,7 @@ void Server::Start()
     if (m_running)
         return;
     
+    Debug::Log("Starting server...");
     std::cout << Style::style("STARTING SERVER\n", {Style::STYLE_TYPE::RED});
     m_running = true;
     SetupListener();
@@ -119,6 +124,7 @@ void Server::Stop()
         return;
 
 
+    Debug::Log("Stopping server...");
     std::cout << Style::style("STOPPING SERVER\n", {Style::STYLE_TYPE::BRIGHT_RED, Style::STYLE_TYPE::BOLD});
     m_running = false;
 
@@ -127,6 +133,7 @@ void Server::Stop()
         shutdown(m_listenfd, SHUT_RDWR);
         close(m_listenfd);
         m_listenfd = -1;
+        Debug::Log("Client sock: closed");
         std::cout << "Client sock: closed\n";
     }
 
@@ -135,6 +142,7 @@ void Server::Stop()
         shutdown(m_epollfd, SHUT_RDWR);
         close(m_epollfd);
         m_epollfd = -1;
+        Debug::Log("Event handler: stopped");
         std::cout << "Event handler: stopped\n";
     }
 
@@ -158,6 +166,7 @@ void Server::EventLoop()
 
         if (n < 0)
         {
+            Debug::Log("epoll_wait() error", Debug::LOG_LEVEL::ERROR);
             perror("epoll_wait()");
             break;
         }
@@ -186,6 +195,7 @@ void Server::HandleNewConnection()
                 break;
             else
             {
+                Debug::Log("accept() error", Debug::LOG_LEVEL::ERROR);
                 perror("accept()");
                 break;
             }
@@ -197,6 +207,7 @@ void Server::HandleNewConnection()
 
         if( epoll_ctl(m_epollfd, EPOLL_CTL_ADD, clientfd, &ev) < 0)
         {
+            Debug::Log("epoll_ctl() error", Debug::LOG_LEVEL::ERROR);
             perror("epoll_ctl(): add client");
             close(clientfd);
             continue;
@@ -256,10 +267,16 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         auto pubkeyPkt{ client.session->RecvPacket() };
 
         if (!pubkeyPkt)
+        {
+            Debug::Log("Invalid public key", Debug::LOG_LEVEL::ERROR);
             return;
+        }
 
         if (pubkeyPkt->size() != crypto_box_PUBLICKEYBYTES)
+        {
+            Debug::Log("Public key has an invalid size", Debug::LOG_LEVEL::ERROR);
             return;
+        }
 
         memcpy(client.client_pk, pubkeyPkt->data(), crypto_box_PUBLICKEYBYTES);
         
@@ -282,6 +299,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         ) != 0)
         {
             // Bad handshake
+            Debug::Log("Bad handshake -> Disconnecting client", Debug::LOG_LEVEL::ERROR);
             DisconnectClient(fd);
             return;
         }
@@ -310,7 +328,11 @@ void Server::HandleClientEvent(int fd, uint32_t events)
     if (!client.registered)
     {
         if (rawPkt->size() < crypto_secretbox_NONCEBYTES)
+        {
+            Debug::Log("Username packet too small -> Disconnecting client", Debug::LOG_LEVEL::WARNING);
+            DisconnectClient(fd);
             return;
+        }
 
         const unsigned char* np{ (unsigned char*) rawPkt->data() };
         const unsigned char* ct{ np + crypto_secretbox_NONCEBYTES };
@@ -326,6 +348,8 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         ) != 0)
         {
             // Bad username packet
+            Debug::Log("Invalid username packet -> Disconnecting client", Debug::LOG_LEVEL::WARNING);
+            DisconnectClient(fd);
             return;
         }
 
@@ -338,6 +362,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
 
             if (m_usernames.count(uname))
             {
+                Debug::Log("Client attempted to login with a username that is already taken. Disconnecting", Debug::LOG_LEVEL::INFO);
                 SendSecretbox(client.session.get(), "SERVER::USERNAME_TAKEN");
                 DisconnectClient(fd);
                 return;
@@ -380,6 +405,7 @@ bool Server::SendSecretbox(NetworkSession* sess, const std::string& msg)
         m_group_key
     ) != 0)
     {
+        Debug::Log("Failed to encrypt packet -> Dropping", Debug::LOG_LEVEL::WARNING);
         return false;
     }
 
@@ -387,7 +413,10 @@ bool Server::SendSecretbox(NetworkSession* sess, const std::string& msg)
     payload.append((char*) nonce, crypto_secretbox_NONCEBYTES);
     payload.append((char*) cipher.data(), cipher.size());
     if (!sess->SendPacket(payload))
+    {
+        Debug::Log("Failed to send message", Debug::LOG_LEVEL::WARNING);
         return false;
+    }
 
     return true;
 }

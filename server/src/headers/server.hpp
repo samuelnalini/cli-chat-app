@@ -1,10 +1,7 @@
 #pragma once
 
 #include "network_session.hpp"
-#include "debug.hpp"
 
-#include <sodium/crypto_box.h>
-#include <sodium/crypto_secretbox.h>
 #include <string>
 #include <unistd.h>
 #include <unordered_map>
@@ -15,6 +12,7 @@
 #include <arpa/inet.h>
 #include <stdint.h>
 #include <sodium.h>
+#include <memory>
 
 class Server
 {
@@ -43,7 +41,6 @@ private:
     int m_epollfd{ -1 };
 
     uint16_t m_port;
-    Debugger m_debugger;
 
     bool m_running{ false };
 

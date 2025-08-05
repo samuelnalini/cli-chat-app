@@ -1,66 +1,35 @@
 #include "debug.hpp"
 
-#include <filesystem>
 #include <fstream>
-#include <iostream>
+#include <chrono>
+#include <iomanip>
 
-Debugger::Debugger(const char* path)
-    : m_filePath(path)
-{}
+std::mutex Debug::m_debugMutex;
+std::queue<std::string> Debug::m_logQueue;
 
-void Debugger::Start()
+bool Debug::m_log(const std::string& msg)
 {
-    m_running = true; 
-    //m_debugThread = std::thread(&Debugger::Loop, this); 
-    Log("[*] Debugger started");
-}
+    std::lock_guard<std::mutex> lock(m_debugMutex);
 
-void Debugger::Stop()
-{
-    if (!m_running)
-        return;
-    
-    Log("[!] Debugger stopped");
-    m_running = false;
-    /*if (m_debugThread.joinable())
-        m_debugThread.join();
-    */
+    if (m_logQueue.size() >= MAX_LOG_ENTRIES)
+        m_logQueue.pop();
 
-    FileWrite();
-}
-
-bool Debugger::Log(const char* msg)
-{
-    if (true)
-        return true;
-
-    if (!m_running)
-        return false;
-
-    std::lock_guard<std::mutex> lock(m_logMutex);
     m_logQueue.push(msg);
 
     return true;
 }
 
-bool Debugger::Log(bool val)
+bool Debug::DumpToFile(const std::string& path)
 {
-    if (!m_running)
-        return false;
+    std::lock_guard<std::mutex> lock(m_debugMutex);
 
-    return Log(val ? "true" : "false");
-}
+    if (m_logQueue.empty())
+        return true;
 
-bool Debugger::FileWrite()
-{
-    std::lock_guard<std::mutex> lock(m_logMutex);
-    std::ofstream file(m_filePath, std::ios::app | std::ios::trunc | std::ios::out);
-
+    std::ofstream file(path, std::ios::app);
+    
     if (!file.is_open())
-    {
-        //std::cerr << "Failed to open file" << m_filePath << '\n';
         return false;
-    }
 
     while (!m_logQueue.empty())
     {
@@ -68,19 +37,44 @@ bool Debugger::FileWrite()
         m_logQueue.pop();
     }
 
-    //std::cout << "Logged\n";
     return true;
 }
 
-void Debugger::Loop()
-{/*
-    while (m_running)
-    {
-        if (!m_logQueue.empty() && m_running)
-            FileWrite();
+bool Debug::DumpToFile(const char* path)
+{
+    return DumpToFile(std::string(path));
+}
 
-        if (m_running)
-            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+void Debug::Flush()
+{
+    std::lock_guard<std::mutex> lock(m_debugMutex);
+
+    while (!m_logQueue.empty())
+        m_logQueue.pop();
+}
+
+std::string Debug::ToString(LOG_LEVEL level)
+{
+    switch (level)
+    {
+        case LOG_LEVEL::INFO:
+            return "INFO";
+        case LOG_LEVEL::WARNING:
+            return "WARN";
+        case LOG_LEVEL::ERROR:
+            return "ERROR";
+        default:
+            return "UNKNOWN";
     }
-    
-*/}
+}
+
+std::string Debug::GetTimestamp()
+{
+    auto now{ std::chrono::system_clock::now() };
+    std::time_t t{ std::chrono::system_clock::to_time_t(now) };
+    std::tm tm{ *std::localtime(&t) };
+
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    return oss.str();
+}
