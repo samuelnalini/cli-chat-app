@@ -19,14 +19,15 @@ set(COMMON_SOURCES common/src)
 
 # Dependencies
 
-find_package(Curses REQUIRED)
+set(CURSES_NEED_WIDE TRUE)
+find_library(NCURSESW_LIBRARY ncursesw REQUIRED)
+find_path(NCURSESW_INCLUDE_DIR ncurses.h REQUIRED)
 
 # Server
 
 add_executable(server
     ${SERVER_SOURCES}/main.cpp
     ${SERVER_SOURCES}/server.cpp
-    # ${COMMON_SOURCES}/common.cpp
     ${COMMON_SOURCES}/network_session.cpp
     ${COMMON_SOURCES}/debug.cpp
 )
@@ -44,15 +45,15 @@ add_executable(client
     ${CLIENT_SOURCES}/main.cpp
     ${CLIENT_SOURCES}/client.cpp
     ${CLIENT_SOURCES}/ncursesUI.cpp
-    # ${COMMON_SOURCES}/common.cpp
     ${COMMON_SOURCES}/network_session.cpp
     ${COMMON_SOURCES}/debug.cpp
 )
 
 
-target_link_libraries(client PRIVATE ${CURSES_LIBRARIES} sodium)
 target_include_directories(client
     PRIVATE
-        ${CURSES_INCLUDE_DIR}
+        ${NCURSESW_INCLUDE_DIR}
+        ${CMAKE_SOURCE_DIR}/external/utf8cpp/source
         ${CMAKE_SOURCE_DIR}/common/headers
 )
+target_link_libraries(client PRIVATE ${NCURSESW_LIBRARY} sodium)

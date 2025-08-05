@@ -18,10 +18,10 @@ public:
     void Init();
     void Cleanup();
 
-    bool GetInputChar(int& ch);
+    bool GetInputChar(wint_t& ch);
     void PushMessage(const std::string& msg);
     void PrintBufferedMessages();
-    void RedrawInputLine(const std::string& prompt, const std::string& inputBuffer);
+    void RedrawInputLine(const std::string& prompt, const std::wstring& inputBuffer);
 
     std::optional<std::string> PromptInput(const std::string& prompt);
 

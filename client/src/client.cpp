@@ -183,42 +183,30 @@ void Client::CloseSession()
 
 void Client::ClientLoop()
 {
-    std::string buffer;
-    const std::string prompt{ " > " };
+   const std::string prompt{ " > " };
 
-    while (m_running)
-    {
-        int ch;
-        
-        if (m_ui.GetInputChar(ch))
+   while (m_running)
+   {
+        auto inputOpt{ m_ui.PromptInput(m_username + prompt) };
+
+        if (!inputOpt.has_value())
+            break;
+
+        std::string input{ inputOpt.value() };
+        if (input.empty())
+            continue;
+
+        if (input == "/exit")
         {
-            if (ch == '\n' && !buffer.empty())
-            {
-                if (buffer == "/exit")
-                {
-                    m_exitReason = "Client exited";
-                    Stop();
-                    break;
-                }
-
-                m_session->SendPacket(buffer);
-                buffer.clear();
-            } else if (ch == KEY_BACKSPACE || ch == 127 || ch == '\b')
-            {
-                if (!buffer.empty())
-                    buffer.pop_back();
-            } else if (isprint(ch))
-            {
-                buffer.push_back(static_cast<char>(ch));
-            }
+            Stop();
+            break;
         }
 
-        m_ui.RedrawInputLine(m_username + prompt, buffer);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+        m_session->SendPacket(input);
+   }
 
-    m_debugger.Log("Exited client loop, stopping");
-    Stop();
+   m_debugger.Log("Exited client loop, stopping");
+   Stop();
 }
 
 void Client::UIUpdateLoop()
@@ -239,7 +227,6 @@ void Client::HandleBroadcast()
         auto msgOpt{ m_session->RecvPacket() };
         if (!msgOpt.has_value())
         {
-            m_debugger.Log("Server closed connection");   
             m_exitReason = "Server closed connection.";
             Stop();
             break;

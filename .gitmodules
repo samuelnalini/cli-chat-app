@@ -1,3 +1,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg.git
+[submodule "external/utf8cpp"]
+	path = external/utf8cpp
+	url = https://github.com/nemtrif/utfcpp.git

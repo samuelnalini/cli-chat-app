@@ -1,5 +1,8 @@
 #include "headers/ncursesUI.hpp"
+#include "utf8.h"
+
 #include <ncurses.h>
+#include <locale.h>
 #include <optional>
 
 NcursesUI::NcursesUI(Debugger& debugger)
@@ -14,6 +17,7 @@ void NcursesUI::Init()
 {
     m_debugger->Log("Initializing UI...");
 
+    setlocale(LC_ALL, "");
     initscr();
     cbreak();
     noecho();
@@ -50,20 +54,31 @@ void NcursesUI::Cleanup()
     endwin();
 }
 
-bool NcursesUI::GetInputChar(int& ch)
+bool NcursesUI::GetInputChar(wint_t& ch)
 {
     if (!running)
         return false;
 
     std::lock_guard<std::mutex> lock(m_mutex);
-    ch = wgetch(m_inputWin);
-    
-    if (ch == ERR)
-    {
-        return false;
-    }
 
-    return true;
+
+    int result{ wget_wch(m_inputWin, &ch) };
+
+    return result != ERR;
+}
+
+std::string to_utf8(const std::wstring& wstr)
+{
+    std::string result;
+    utf8::utf32to8(wstr.begin(), wstr.end(), std::back_inserter(result));
+    return result;
+}
+
+std::wstring from_utf8(const std::string& str)
+{
+    std::wstring out;
+    utf8::utf8to32(str.begin(), str.end(), std::back_inserter(out));
+    return out;
 }
 
 void NcursesUI::PushMessage(const std::string& msg)
@@ -82,25 +97,30 @@ void NcursesUI::PrintBufferedMessages()
     
     std::unique_lock<std::mutex> lock(m_mutex, std::defer_lock);
     std::unique_lock<std::mutex> lock2(m_queueMutex, std::defer_lock);
-
     std::lock(lock, lock2);
     
     bool printed{ false };
-
     while (!m_msgQueue.empty())
     {
         std::string msg{ m_msgQueue.front() };
         m_msgQueue.pop();
-        wprintw(m_msgWin, "%s\n", msg.c_str());
+
+        std::wstring wmsg{ from_utf8(msg) };
+        wmsg.push_back(L'\n');
+
+        mvwaddwstr(m_msgWin, getcury(m_msgWin), 0, wmsg.c_str());
         printed = true;
     }
 
     if (printed)
+    {
         wrefresh(m_msgWin);
+        wrefresh(m_inputWin);
+    }
 }
 
 
-void NcursesUI::RedrawInputLine(const std::string& prompt, const std::string& inputBuffer)
+void NcursesUI::RedrawInputLine(const std::string& prompt, const std::wstring& inputBuffer)
 {
     if (!running)
         return;
@@ -110,9 +130,11 @@ void NcursesUI::RedrawInputLine(const std::string& prompt, const std::string& in
     werase(m_inputWin);
     box(m_inputWin, 0, 0);
 
-    mvwprintw(m_inputWin, 1, 1, "%s%s", prompt.c_str(), inputBuffer.c_str());
+    mvwprintw(m_inputWin, 1, 1, "%s", prompt.c_str());
+    int startX{ 1 + (int)prompt.length() };
 
-    wmove(m_inputWin, 1, 1 + (int)prompt.length() + (int)inputBuffer.length());
+    mvwaddwstr(m_inputWin, 1, startX, inputBuffer.c_str());
+    wmove(m_inputWin, 1, startX + (int)inputBuffer.length());
 
     wrefresh(m_inputWin);
 }
@@ -122,23 +144,18 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
     if (!running)
         return std::nullopt;
 
-    std::lock_guard<std::mutex> lock(m_mutex);
-    std::string input;
-    int startX = 1 + prompt.length();
+    std::wstring input;
+    RedrawInputLine(prompt, input);
 
-    werase(m_inputWin);
-    box(m_inputWin, 0, 0);
-    mvwprintw(m_inputWin, 1, 1, "%s", prompt.c_str());
-    wmove(m_inputWin, 1, startX);
-    wrefresh(m_inputWin);
-
-    int ch{};
-
-    m_debugger->Log("Input prompted");
+    wint_t ch{};
     while (true)
     {
-        ch = wgetch(m_inputWin);
-        if (ch == '\n')
+        int result{ wget_wch(m_inputWin, &ch) };
+
+        if (result == ERR)
+            continue;
+
+        if (ch == L'\n')
             break;
 
         if (ch == KEY_BACKSPACE || ch == 127 || ch == '\b')
@@ -146,20 +163,14 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
             if (!input.empty())
             {
                 input.pop_back();
-                mvwprintw(m_inputWin, 1, startX, "%s", std::string(m_cols - startX - 1, ' ').c_str());
-                mvwprintw(m_inputWin, 1, startX, "%s", input.c_str());
-                wmove(m_inputWin, 1, startX + input.length());
-                wrefresh(m_inputWin);
             }
-        } else if (isprint(ch))
+        } else if (iswprint(ch))
         {
             input.push_back(ch);
-            mvwprintw(m_inputWin, 1, startX, "%s", input.c_str());
         }
 
-        wrefresh(m_inputWin);
+        RedrawInputLine(prompt, input);
     }
 
-    m_debugger->Log(input.c_str());
-    return input;
+    return to_utf8(input);
 }
