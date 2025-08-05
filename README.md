@@ -3,7 +3,7 @@
 
 ## ABOUT:
 
-CLI Chat App is a simple command line application that allows communication between multiple users. It uses a client-server architecture, allowing for scalability and ease of use. Being written in C++, this application is fast and lightweight, making use of low level concepts such as sockets, while also using threads for asynchronous operations.
+CLI Chat App is a simple command line application that allows encrypted communication between multiple users. It uses a client-server architecture, allowing for scalability and ease of use. Being written in C++, this application is fast and lightweight, making use of low level concepts such as sockets, while also utilizing multithreading for asynchronous operations.
 
 <sub>*Please see [CONSIDERATIONS](#considerations) before attempting to use this!*</sub>
 
@@ -105,17 +105,15 @@ Not very exciting, but more commands will be added in the future.
 
 ### CONSIDERATIONS:
 
-*NOTE: As of right now, messages are **__NOT__ ENCRYPTED!** This means that this app is **__not__ secure** and others may be able to read chat logs. Do not use this for any real work. You have been warned.*
+*NOTE: There is no safety guarantee for this program. Though messages SHOULD be encrypted, no system is ever 100% secure. I am still working on this and updating it, but do not trust anything sent over the Internet. I am not liable for anything that may occur as a result of using this application. You have been warned, use this at your own risk.*
 
 *NOTE: This was designed to run on Linux machines! The socket code for other platforms are slightly different and will not work without modification!*
-
-*This application is receiving active updates. It will improve in the future.*
 
 ### THINGS I'VE LEARNED THROUGH THIS PROJECT:
   - User input
   - CMake Build Tools
   - Package management through vcpkg
-  - ~~Message encryption through libsodium~~
+  - Message encryption through libsodium
   - Networking through sockets and packets
   - TCP Socket Implementation
   - Basic Client/Server Architecture

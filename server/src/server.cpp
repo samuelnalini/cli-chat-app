@@ -4,6 +4,8 @@
 #include <arpa/inet.h>
 #include <cerrno>
 #include <mutex>
+#include <sodium/crypto_box.h>
+#include <sodium/crypto_secretbox.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <iostream>
@@ -12,13 +14,23 @@
 #include <sys/epoll.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <string.h>
 
 constexpr int MAX_EXENTS{ 64 };
 
 Server::Server(uint16_t port)
     : m_port(port)
     , m_debugger("server_log.txt")
-{}
+{
+    if (sodium_init() < 0)
+    {
+        std::cerr << "Unable to initialize libsodium\n";
+        exit(1);
+    }
+
+    crypto_box_keypair(m_server_pk, m_server_sk);
+    randombytes_buf(m_group_key, sizeof m_group_key);
+}
 
 Server::~Server()
 {
@@ -196,6 +208,37 @@ void Server::HandleNewConnection()
     }
 }
 
+void Server::DisconnectClient(int fd)
+{
+    std::unique_lock<std::mutex> lock(m_clientsMutex);
+
+    auto it{ m_clients.find(fd) };
+    if (it == m_clients.end())
+        return;
+
+    ClientInfo& client{ it->second };
+
+    epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, nullptr);
+    client.session->CloseSession();
+
+    std::string user{ client.username };
+    bool was_registered = client.registered;
+
+    if (was_registered)
+    {
+        m_usernames.erase(client.username);
+    }
+
+    m_clients.erase(it);
+    lock.unlock();
+
+    if (was_registered)
+    {
+        BroadcastEncrypted(user + " has disconnected");
+        std::cout << user + " has " + Style::red("disconnected\n");
+    }
+}
+
 void Server::HandleClientEvent(int fd, uint32_t events)
 {
     auto it{ m_clients.find(fd) };
@@ -205,61 +248,151 @@ void Server::HandleClientEvent(int fd, uint32_t events)
 
     ClientInfo &client{ it->second };
 
-    auto dataOpt{ client.session->RecvPacket() };
-    if (!dataOpt)
+    // Key exchange
+
+    if (!client.key_exchanged)
     {
-        // Disconnect
-        epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, nullptr);
-        client.session->CloseSession();
+        // Receive client public key
+        auto pubkeyPkt{ client.session->RecvPacket() };
 
-        if (client.registered)
+        if (!pubkeyPkt)
+            return;
+
+        if (pubkeyPkt->size() != crypto_box_PUBLICKEYBYTES)
+            return;
+
+        memcpy(client.client_pk, pubkeyPkt->data(), crypto_box_PUBLICKEYBYTES);
+        
+        // Send server public key
+        std::string srvpk((char*) m_server_pk, crypto_box_PUBLICKEYBYTES);
+        client.session->SendPacket(srvpk);
+
+        // Encrypt the group key w/ client's pk
+        unsigned char nonce[crypto_box_NONCEBYTES];
+        randombytes_buf(nonce, sizeof nonce);
+
+        std::vector<unsigned char> cipher(crypto_box_MACBYTES + sizeof m_group_key);
+
+        if (crypto_box_easy(cipher.data(),
+            m_group_key,
+            sizeof m_group_key,
+            nonce,
+            client.client_pk,
+            m_server_sk
+        ) != 0)
         {
-            std::lock_guard<std::mutex> lock(m_clientsMutex);
-            m_usernames.erase(client.username);
+            // Bad handshake
+            DisconnectClient(fd);
+            return;
         }
 
-        std::string user{ client.username };
-        m_clients.erase(it);
-        if (client.registered)
-        {
-            BroadcastMessage(client.username + " has disconnected");
-            std::cout << client.username + " has " + Style::red("disconnected\n");
-        }
+        std::string payload;
+        payload.append((char*) nonce, crypto_box_NONCEBYTES);
+        payload.append((char*) cipher.data(), cipher.size());
+        client.session->SendPacket(payload);
 
+        client.key_exchanged = true;
         return;
     }
 
+
+    // Receive the next packet as raw encrypted blob
+
+    auto rawPkt{ client.session->RecvPacket() };
+    if (!rawPkt)
+    {
+        DisconnectClient(fd);
+        return;
+    }
+
+    // Username
+
     if (!client.registered)
     {
-        // Get username
-        std::string uname{ *dataOpt };
+        if (rawPkt->size() < crypto_secretbox_NONCEBYTES)
+            return;
+
+        const unsigned char* np{ (unsigned char*) rawPkt->data() };
+        const unsigned char* ct{ np + crypto_secretbox_NONCEBYTES };
+        size_t ctLen{ rawPkt->size() - crypto_secretbox_NONCEBYTES };
+        std::vector<unsigned char> pt(ctLen - crypto_secretbox_MACBYTES);
+
+        if (crypto_secretbox_open_easy(
+            pt.data(),
+            ct,
+            ctLen,
+            np,
+            m_group_key
+        ) != 0)
+        {
+            // Bad username packet
+            return;
+        }
+
+        std::string uname{ (char*) pt.data(), pt.size() };
+
+        // Enforce uniqueness
+
         {
             std::lock_guard<std::mutex> lock(m_clientsMutex);
 
             if (m_usernames.count(uname))
             {
-                client.session->SendPacket("SERVER::USERNAME_TAKEN");
-                epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, nullptr);
-                client.session->CloseSession();
-                m_clients.erase(fd);
+                SendSecretbox(client.session.get(), "SERVER::USERNAME_TAKEN");
+                DisconnectClient(fd);
                 return;
             }
-
             m_usernames.insert(uname);
         }
 
         client.username = std::move(uname);
         client.registered = true;
-        BroadcastMessage(client.username + " has connected");
+
+        BroadcastEncrypted(client.username + " has connected");
         std::cout << client.username + " has " + Style::green("connected\n");
-    } else if (!dataOpt->empty())
+        return;
+    }
+
+    // Forward the packet
+    
+    for (auto& [otherFd, otherClient] : m_clients)
     {
-        BroadcastMessage(client.username + ": " + *dataOpt);
+        if (!otherClient.registered)
+            continue;
+
+        otherClient.session->SendPacket(*rawPkt);
     }
 }
 
 
-void Server::BroadcastMessage(const std::string& msg)
+bool Server::SendSecretbox(NetworkSession* sess, const std::string& msg)
+{
+    unsigned char nonce[crypto_secretbox_NONCEBYTES];
+    randombytes_buf(nonce, sizeof nonce);
+
+    std::vector<unsigned char> cipher(crypto_secretbox_MACBYTES + msg.size());
+
+    if (crypto_secretbox_easy(
+        cipher.data(),
+        (unsigned char*) msg.data(),
+        msg.size(),
+        nonce,
+        m_group_key
+    ) != 0)
+    {
+        return false;
+    }
+
+    std::string payload;
+    payload.append((char*) nonce, crypto_secretbox_NONCEBYTES);
+    payload.append((char*) cipher.data(), cipher.size());
+    if (!sess->SendPacket(payload))
+        return false;
+
+    return true;
+}
+
+void Server::BroadcastEncrypted(const std::string& msg)
 {
     std::vector<int> removeList;
 
@@ -267,16 +400,13 @@ void Server::BroadcastMessage(const std::string& msg)
     {
         if (!client.registered)
             continue;
-
-        if (!client.session->SendPacket(msg))
+        
+        if (!SendSecretbox(client.session.get(), msg))
             removeList.push_back(fd);
     }
 
     for (int fd : removeList)
     {
-        epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, nullptr);
-        m_clients[fd].session->CloseSession();
-        m_clients.erase(fd);
-        
+        DisconnectClient(fd);
     }
 }

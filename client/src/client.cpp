@@ -5,10 +5,14 @@
 #include <chrono>
 #include <iostream>
 #include <ncurses.h>
+#include <sodium/crypto_box.h>
+#include <sodium/crypto_secretbox.h>
 #include <stdexcept>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <string.h>
+#include <sodium.h>
 
 Client::Client(std::string ip, int port)
     : m_ip(std::move(ip))
@@ -39,11 +43,41 @@ void Client::Start()
         m_ui.Init();
         
         m_debugger.Log("[*] Client started...");
+
+
+        // Encryption Handshake
+
+        crypto_box_keypair(m_client_pk, m_client_sk);
+
+        // Send PK
+        m_session->SendPacket(std::string((char*) m_client_pk, crypto_box_PUBLICKEYBYTES));
+
+        // Receive server PK
+        auto srvpkPkt{ m_session->RecvPacket().value() };
+        memcpy(m_server_pk, srvpkPkt.data(), crypto_box_PUBLICKEYBYTES);
+
+        // Receive encrypted group key
+        auto grpPkt{ m_session->RecvPacket().value() };
+        
+        const unsigned char* nonce{ (unsigned char*) grpPkt.data() };
+        const unsigned char* ct{ nonce + crypto_box_NONCEBYTES };
+        size_t ctLen{ grpPkt.size() - crypto_box_NONCEBYTES };
+
+        if (crypto_box_open_easy(
+            m_group_key,
+            ct,
+            ctLen,
+            nonce,
+            m_server_pk,
+            m_client_sk
+        ) != 0)
+        {
+            throw std::runtime_error("Failed to decrypt group key");
+        }
+
         // Username
 
         auto usernameOpt{ m_ui.PromptInput("Username: ") };
-
-        m_debugger.Log("Username prompted");
 
         if (!usernameOpt.has_value() || usernameOpt->empty() || usernameOpt->length() > MAX_USERNAME_LEN)
         {
@@ -54,9 +88,7 @@ void Client::Start()
 
         const std::string username{ *usernameOpt };
         
-        m_debugger.Log(username.c_str());
-
-        if (!m_session->SendPacket(username))
+        if (!SendEncrypted(username))
         {
             std::string logStr{ "Invalid username " + username };
             m_debugger.Log(logStr.c_str());
@@ -166,7 +198,6 @@ bool Client::CreateSession()
         }
 
         m_session = std::make_unique<NetworkSession>(fd);
-        std::cout << "Session created!\n";
         return true;
     } catch (const std::runtime_error& e)
     {
@@ -179,6 +210,72 @@ void Client::CloseSession()
 {
     if (m_session)
         m_session->CloseSession();
+}
+
+bool Client::SendEncrypted(const std::string& plaintext)
+{
+    unsigned char nonce[crypto_secretbox_NONCEBYTES];
+    randombytes_buf(nonce, sizeof nonce);
+
+    std::vector<unsigned char> cipher(crypto_secretbox_MACBYTES + plaintext.size());
+    
+    if (crypto_secretbox_easy(
+        cipher.data(),
+        (unsigned char*) plaintext.data(),
+        plaintext.size(),
+        nonce,
+        m_group_key
+    ) != 0)
+    {
+        // Dropped
+        return false;
+    }
+
+    std::string payload;
+    payload.append((char*) nonce, crypto_secretbox_NONCEBYTES);
+    payload.append((char*) cipher.data(), cipher.size());
+    
+    return m_session->SendPacket(payload);
+}
+
+std::optional<std::string> Client::RecvDecrypted()
+{
+    auto encOpt{ m_session->RecvPacket() };
+
+    if (!encOpt)
+        return std::nullopt;
+
+    auto &enc{ *encOpt };
+
+    if (enc.size() < crypto_secretbox_NONCEBYTES + crypto_secretbox_MACBYTES)
+        return std::nullopt;
+
+    const unsigned char* nonce{ (unsigned char*) enc.data() };
+    const unsigned char* ct{ nonce + crypto_secretbox_NONCEBYTES };
+    size_t ctLen{ enc.size() - crypto_secretbox_NONCEBYTES };
+    size_t ptLen{ ctLen - crypto_secretbox_MACBYTES };
+
+    std::vector<unsigned char> pt(ptLen);
+
+    if (ctLen <= crypto_secretbox_MACBYTES)
+    {
+        m_debugger.Log("Encrypted message too short for valid decryption");
+        return std::nullopt;
+    }
+
+    if (crypto_secretbox_open_easy(
+        pt.data(),
+        ct,
+        ctLen,
+        nonce,
+        m_group_key
+    ) != 0)
+    {
+        m_debugger.Log("Decryption failed: invalid ciphertext or tampering");
+        return std::nullopt;
+    }
+
+    return std::string((char*) pt.data(), pt.size());
 }
 
 void Client::ClientLoop()
@@ -202,7 +299,7 @@ void Client::ClientLoop()
             break;
         }
 
-        m_session->SendPacket(input);
+        SendEncrypted(m_username + ": " + input);
    }
 
    m_debugger.Log("Exited client loop, stopping");
@@ -224,7 +321,7 @@ void Client::HandleBroadcast()
 {
     while (m_running)
     {
-        auto msgOpt{ m_session->RecvPacket() };
+        auto msgOpt{ RecvDecrypted() };
         if (!msgOpt.has_value())
         {
             m_exitReason = "Server closed connection.";

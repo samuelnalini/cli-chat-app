@@ -1,3 +1,10 @@
+# 0.4.0 - Message encryption!
+    ADDITIONS
+    [+] Usernames are now encrypted
+    [+] Messages are now encrypted
+
+    Each session generates a unique key that is then shared with the clients connected.
+
 # 0.3.5 - UTF-8 & terminal colors
     ADDITIONS
     [+] UTF-8 submodule

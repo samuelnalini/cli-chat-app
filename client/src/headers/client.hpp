@@ -3,11 +3,14 @@
 #include "ncursesUI.hpp"
 #include "network_session.hpp"
 #include "debug.hpp"
+#include <sodium/crypto_box.h>
+#include <sodium/crypto_secretbox.h>
 #include <string>
 #include <vector>
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <sodium.h>
 
 class Client
 {
@@ -20,6 +23,11 @@ public:
 
 private:
     std::unique_ptr<NetworkSession> m_session;
+
+    unsigned char m_client_pk[crypto_box_PUBLICKEYBYTES];
+    unsigned char m_client_sk[crypto_box_SECRETKEYBYTES];
+    unsigned char m_server_pk[crypto_box_PUBLICKEYBYTES];
+    unsigned char m_group_key[crypto_secretbox_KEYBYTES];
 
     NcursesUI m_ui;
     Debugger m_debugger;
@@ -40,6 +48,9 @@ private:
 private:
     bool CreateSession();
     void CloseSession();
+
+    bool SendEncrypted(const std::string& plaintext);
+    std::optional<std::string> RecvDecrypted();
 
     void ClientLoop();
     void UIUpdateLoop();
