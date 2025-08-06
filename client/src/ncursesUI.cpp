@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include <locale.h>
 #include <optional>
+#include <wchar.h>
 
 NcursesUI::NcursesUI()
     : m_msgWin(nullptr)
@@ -142,7 +143,7 @@ void NcursesUI::PrintBufferedMessages()
 }
 
 
-void NcursesUI::RedrawInputLine(const std::string& prompt, const std::wstring& inputBuffer)
+void NcursesUI::RedrawInputLine(const std::string& prompt, const std::wstring& inputBuffer, size_t cursorPos)
 {
     if (!running)
         return;
@@ -153,11 +154,20 @@ void NcursesUI::RedrawInputLine(const std::string& prompt, const std::wstring& i
     box(m_inputWin, 0, 0);
 
     mvwprintw(m_inputWin, 1, 1, "%s", prompt.c_str());
-    int startX{ 1 + (int)prompt.length() };
 
+    int startX{ 1 + static_cast<int>(prompt.length()) };
     mvwaddwstr(m_inputWin, 1, startX, inputBuffer.c_str());
-    wmove(m_inputWin, 1, startX + (int)inputBuffer.length());
 
+    int visualCursorOffset{ 0 };
+
+    for (size_t i{ 0 }; i < cursorPos && i < inputBuffer.size(); ++i)
+    {
+        int w{ wcwidth(inputBuffer[i]) };
+        if (w > 0)
+            visualCursorOffset += w;
+    }
+
+    wmove(m_inputWin, 1, startX + visualCursorOffset);
     wrefresh(m_inputWin);
 }
 
@@ -167,7 +177,9 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
         return std::nullopt;
 
     std::wstring input;
-    RedrawInputLine(prompt, input);
+    size_t cursorPos{ 0 };
+
+    RedrawInputLine(prompt, input, cursorPos);
 
     wint_t ch{};
     while (running)
@@ -180,18 +192,48 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
         if (ch == L'\n')
             break;
 
-        if (ch == KEY_BACKSPACE || ch == 127 || ch == '\b')
-        {
-            if (!input.empty())
-            {
-                input.pop_back();
-            }
-        } else if (iswprint(ch))
-        {
-            input.push_back(ch);
-        }
 
-        RedrawInputLine(prompt, input);
+        switch(ch)
+        {
+            case KEY_BACKSPACE:
+            case 127:
+            case '\b':
+                if (cursorPos > 0)
+                {
+                    input.erase(cursorPos - 1, 1);
+                    --cursorPos;
+                }
+                break;
+            case KEY_LEFT:
+                if (cursorPos > 0)
+                    --cursorPos;
+                break;
+            case KEY_RIGHT:
+                if (cursorPos < input.size())
+                    ++cursorPos;
+                break;
+            case KEY_UP:
+            case KEY_DOWN:
+                break;
+            case KEY_DC:
+                if (cursorPos < input.size())
+                    input.erase(cursorPos, 1);
+                break;
+            case KEY_HOME:
+                cursorPos = 0;
+                break;
+            case KEY_END:
+                cursorPos = input.size();
+                break;
+            default:
+                if (iswprint(ch))
+                {
+                    input.insert(cursorPos, 1, ch);
+                    ++cursorPos;
+                }
+                break;
+        }
+        RedrawInputLine(prompt, input, cursorPos);
     }
 
     return to_utf8(input);

@@ -21,7 +21,7 @@ public:
     bool GetInputChar(wint_t& ch);
     void PushMessage(const std::string& msg);
     void PrintBufferedMessages();
-    void RedrawInputLine(const std::string& prompt, const std::wstring& inputBuffer);
+    void RedrawInputLine(const std::string& prompt, const std::wstring& inputBuffer, size_t cursorPos);
     void FlushInput();
 
     std::optional<std::string> PromptInput(const std::string& prompt);

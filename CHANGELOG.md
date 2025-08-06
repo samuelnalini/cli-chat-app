@@ -1,3 +1,19 @@
+# 0.4.1 - Bug fixes & Input improvements
+
+    BUG FIXES
+    [-] The server was not responding to SIGINT appropriately
+    [-] The client would seg fault upon the server closing the connection
+    [-] The client was not responding to /exit appropriately
+    [-] The UI was not closing upon client exit
+
+    IMPROVEMENTS
+    [+] You can now scroll through text with the arrow keys
+    [+] Added support for home and end keys
+    [+] Ignored up and down arrow keys that were inserting characters
+    [+] The debugger has been reworked
+    [+] log.txt and server_log.txt will now only generate if an error occurred
+    [+] Debug logs will now display a timestamp and a log level (INFO, WARNING, ERROR)
+
 # 0.4.0 - Message encryption!
     ADDITIONS
     [+] Usernames are now encrypted
@@ -9,7 +25,7 @@
     ADDITIONS
     [+] UTF-8 submodule
     [+] UTF-8 compatibility
-    [+] Style class
+    [+] Style class that allows for styled server output
 
     MISC
     [-] Input optimizations
