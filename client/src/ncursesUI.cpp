@@ -15,8 +15,6 @@ NcursesUI::~NcursesUI() {}
 
 void NcursesUI::Init()
 {
-    //Debug::Log("Initializing UI...");
-
     setlocale(LC_ALL, "");
     start_color();
     initscr();
@@ -35,6 +33,7 @@ void NcursesUI::Init()
 
     keypad(m_inputWin, TRUE);
     nodelay(m_inputWin, TRUE);
+    wtimeout(m_inputWin, 0);
 
     init_pair(COLOR_RED, COLOR_BLACK, 1);
     init_pair(COLOR_GREEN, COLOR_BLACK, 2);
@@ -44,19 +43,38 @@ void NcursesUI::Init()
     wrefresh(m_inputWin);
     running = true;
 
-    //Debug::Log("UI Initialized");
+    Debug::Log("UI Initialized");
 }
 
 void NcursesUI::Cleanup()
 {
     running = false;
+    Debug::Log("Started UI cleanup procedure");
+
+    FlushInput();
+
     if (m_msgWin)
+    {
         delwin(m_msgWin);
+        Debug::Log("==> Deleted msg win");
+    }
 
     if (m_inputWin)
+    {
         delwin(m_inputWin);
+        Debug::Log("==> Deleted input win");
+    }
 
     endwin();
+    Debug::Log("==> Called endwin()");
+}
+
+void NcursesUI::FlushInput()
+{
+    wint_t ch;
+
+    while (wget_wch(m_inputWin, &ch) != ERR)
+    {} // Discard
 }
 
 bool NcursesUI::GetInputChar(wint_t& ch)
@@ -65,7 +83,6 @@ bool NcursesUI::GetInputChar(wint_t& ch)
         return false;
 
     std::lock_guard<std::mutex> lock(m_mutex);
-
 
     int result{ wget_wch(m_inputWin, &ch) };
 
@@ -153,10 +170,10 @@ std::optional<std::string> NcursesUI::PromptInput(const std::string& prompt)
     RedrawInputLine(prompt, input);
 
     wint_t ch{};
-    while (true)
+    while (running)
     {
         int result{ wget_wch(m_inputWin, &ch) };
-
+        
         if (result == ERR)
             continue;
 

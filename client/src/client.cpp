@@ -40,12 +40,12 @@ void Client::Start()
         {
             Debug::Log("Failed to create session -> stopping", Debug::LOG_LEVEL::ERROR);
             std::cout << "Failed to create session, stopping\n";
-            Stop();
+            exit(1);
         }
-        
+       
         m_uiActive = true;
         m_ui.Init();
-        
+       
         Debug::Log("[*] Client started...");
 
         // Encryption Handshake
@@ -99,44 +99,66 @@ void Client::Start()
         m_username = username;
         m_running = true;
 
-        //Debug::Log("Initializing threads...");
+    } catch (const std::exception& e)
+    {
+        m_exitReason = e.what();
+        Debug::Log(std::string("Startup exception: ") + e.what());
+        if (m_uiActive)
+            m_ui.Cleanup();
 
-        // Threadhandling
-        
-        auto safe = [&](auto fn){
-            return std::thread([this, fn](){
+        CloseSession();
+
+        Debug::DumpToFile("log.txt");
+        std::cerr << "Error: " << e.what() << '\n';
+        std::exit(1);
+
+    }
+
+    Debug::Log("Initializing threads...");
+
+    // Threadhandling
+
+    auto safe = [&](auto fn){
+        return std::thread([this, fn](){
                 try{
                     (this->*fn)();
                 } catch (const std::exception& e)
                 {
-                Debug::Log((std::string("Exception in thread: ") + e.what()).c_str());
-                    Stop();
+                    Debug::Log((std::string("Exception in thread: ") + e.what()).c_str());
+                    Stop(true);
                 } catch (...)
                 {
-                Debug::Log("Unknown exception in thread, stopping");
-                    Stop();
+                    Debug::Log("Unknown exception in thread, stopping");
+                    Stop(true);
                 }
-            }
-            );
-        };
+                }
+                );
+    };
 
-        m_threadPool.emplace_back(safe(&Client::HandleBroadcast));
-        m_threadPool.emplace_back(safe(&Client::ClientLoop));
-        m_threadPool.emplace_back(safe(&Client::UIUpdateLoop));
-        
-        //Debug::Log("Threads started");
+    m_threadPool.emplace_back(safe(&Client::HandleBroadcast));
+    m_threadPool.emplace_back(safe(&Client::ClientLoop));
+    m_threadPool.emplace_back(safe(&Client::UIUpdateLoop));
 
-        for (auto &thr : m_threadPool)
-        {
-            if (thr.joinable())
-                thr.join();
-        }
+    Debug::Log("Threads started");
 
-    } catch (const std::runtime_error& e)
+    for (auto &thr : m_threadPool)
     {
-        Debug::Log(e.what());
-        m_exitReason = e.what();
-        Stop(true);
+        if (thr.joinable())
+            thr.join();
+    }
+
+    Debug::Log("Threads stopped");
+
+    m_ui.Cleanup();
+
+    Debug::Log("UI cleanup procedure completed");
+
+    if (m_exitReason != "None")
+    {
+
+        Debug::Log("Client exited: " + m_exitReason, Debug::LOG_LEVEL::INFO);
+        Debug::DumpToFile("log.txt");
+        std::cout << "Exited: " << m_exitReason << '\n';
     }
 }
 
@@ -147,27 +169,16 @@ void Client::Stop(bool dumpLog)
         return;
     }
 
+    Debug::Log("Stop called");
+
     m_stopping = true;
     m_running = false;
+    m_ui.running = false;
     m_uiActive = false;
 
-    //Debug::Log("[!] Client stopped");
- 
-    m_ui.Cleanup();
     CloseSession();
 
-
-    if (m_exitReason != "None")
-    {
-
-        Debug::Log("Client exited: " + m_exitReason, Debug::LOG_LEVEL::ERROR);
-        std::cout << "Exited: " << m_exitReason << '\n';
-    }
-
-    if (dumpLog)
-        Debug::DumpToFile("log.txt");
-
-    exit((m_exitReason == "None") ? 0 : 1);
+    Debug::Log("Session closed");
 }
 
 bool Client::CreateSession()
@@ -315,6 +326,8 @@ void Client::UIUpdateLoop()
         m_ui.PrintBufferedMessages();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
+
+    Stop();
 }
 
 void Client::HandleBroadcast()
@@ -324,8 +337,11 @@ void Client::HandleBroadcast()
         auto msgOpt{ RecvDecrypted() };
         if (!msgOpt.has_value())
         {
-            m_exitReason = "Server closed connection.";
-            Stop();
+            if (!m_stopping)
+            {
+                m_exitReason = "Server closed connection.";
+                Debug::Log("Server closed the connection");
+            }
             break;
         }
 
@@ -333,11 +349,13 @@ void Client::HandleBroadcast()
         if (msg == "SERVER::USERNAME_TAKEN")
         {
             std::string logStr{ "Username " + m_username + " is already taken" };
-            m_exitReason = "Username already taken";
+            m_exitReason = logStr;
             Stop();
             break;
         }
 
         m_ui.PushMessage(msg);
     }
+
+    Stop();
 }
