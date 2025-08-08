@@ -108,7 +108,9 @@ Not very exciting, but more commands will be added in the future.
 There are three main branches you can pick from.
 
 `main` is the most stable branch and is *recommended*
+
 `nightly` is an unstable release that often has the latest features *unstable*
+
 `dev` is the most recent development version, which is often broken and full of bugs *not recommended*
 
 ### CONSIDERATIONS:
