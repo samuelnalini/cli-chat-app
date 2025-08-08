@@ -103,6 +103,14 @@ As of right now, there is only the `/exit` command, which will exit the server.
 
 Not very exciting, but more commands will be added in the future.
 
+# BRANCHES
+
+There are three main branches you can pick from.
+
+`main` is the most stable branch and is *recommended*
+`nightly` is an unstable release that often has the latest features *unstable*
+`dev` is the most recent development version, which is often broken and full of bugs *not recommended*
+
 ### CONSIDERATIONS:
 
 *NOTE: There is no safety guarantee for this program. Though messages SHOULD be encrypted, no system is ever 100% secure. I am still working on this and updating it, but do not trust anything sent over the Internet. I am not liable for anything that may occur as a result of using this application. You have been warned, use this at your own risk.*
