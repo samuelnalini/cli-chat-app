@@ -20,7 +20,7 @@
 
 constexpr int MAX_EXENTS{ 64 };
 
-Server::Server(uint16_t port)
+Server::Server(const uint16_t port)
     : m_port(port)
 {
     if (sodium_init() < 0)
@@ -182,7 +182,14 @@ void Server::EventLoop()
             if (fd == m_listenfd)
                 HandleNewConnection();
             else
-                HandleClientEvent(fd, events[i].events);
+            {
+                auto it = m_clients.find(fd);
+
+                if (it == m_clients.end())
+                    return;
+
+                HandleClientEvent(it->second, events[i].events);
+            }
         }
     }
 }
@@ -191,7 +198,7 @@ void Server::HandleNewConnection()
 {
     while (m_running)
     {
-        int clientfd{ accept(m_listenfd, nullptr, nullptr) };
+        int clientfd = accept(m_listenfd, nullptr, nullptr);
 
         if (clientfd < 0)
         {
@@ -219,21 +226,21 @@ void Server::HandleNewConnection()
 
         ClientInfo info;
         info.session = std::make_unique<NetworkSession>(clientfd);
+        info.fd = clientfd;
         m_clients.emplace(clientfd, std::move(info));
     }
 }
 
-void Server::DisconnectClient(int fd)
+void Server::DisconnectClient(ClientInfo& client)
 {
     std::unique_lock<std::mutex> lock(m_clientsMutex);
 
-    auto it{ m_clients.find(fd) };
+    auto it{ m_clients.find(client.fd) };
+
     if (it == m_clients.end())
         return;
 
-    ClientInfo& client{ it->second };
-
-    epoll_ctl(m_epollfd, EPOLL_CTL_DEL, fd, nullptr);
+    epoll_ctl(m_epollfd, EPOLL_CTL_DEL, client.fd, nullptr);
     client.session->CloseSession();
 
     std::string user{ client.username };
@@ -254,14 +261,12 @@ void Server::DisconnectClient(int fd)
     }
 }
 
-void Server::HandleClientEvent(int fd, uint32_t events)
+void Server::HandleClientEvent(ClientInfo& client, uint32_t events)
 {
-    auto it{ m_clients.find(fd) };
+    auto it{ m_clients.find(client.fd) };
 
     if (it == m_clients.end())
         return;
-
-    ClientInfo &client{ it->second };
 
     // Key exchange
 
@@ -304,7 +309,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         {
             // Bad handshake
             Debug::Log("Bad handshake -> Disconnecting client", Debug::LOG_LEVEL::ERROR);
-            DisconnectClient(fd);
+            DisconnectClient(client);
             return;
         }
 
@@ -323,7 +328,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
     auto rawPkt{ client.session->RecvPacket() };
     if (!rawPkt)
     {
-        DisconnectClient(fd);
+        DisconnectClient(client);
         return;
     }
 
@@ -334,7 +339,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         if (rawPkt->size() < crypto_secretbox_NONCEBYTES)
         {
             Debug::Log("Username packet too small -> Disconnecting client", Debug::LOG_LEVEL::WARNING);
-            DisconnectClient(fd);
+            DisconnectClient(client);
             return;
         }
 
@@ -353,7 +358,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
         {
             // Bad username packet
             Debug::Log("Invalid username packet -> Disconnecting client", Debug::LOG_LEVEL::WARNING);
-            DisconnectClient(fd);
+            DisconnectClient(client);
             return;
         }
 
@@ -368,7 +373,7 @@ void Server::HandleClientEvent(int fd, uint32_t events)
             {
                 Debug::Log("Client attempted to login with a username that is already taken. Disconnecting", Debug::LOG_LEVEL::INFO);
                 SendSecretbox(client.session.get(), "SERVER::USERNAME_TAKEN");
-                DisconnectClient(fd);
+                DisconnectClient(client);
                 return;
             }
             m_usernames.insert(uname);
@@ -440,6 +445,11 @@ void Server::BroadcastEncrypted(const std::string& msg)
 
     for (int fd : removeList)
     {
-        DisconnectClient(fd);
+        auto it = m_clients.find(fd);
+
+        if (it == m_clients.end())
+            continue;
+
+        DisconnectClient(it->second);
     }
 }

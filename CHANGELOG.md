@@ -1,3 +1,8 @@
+# 0.4.2u - Optimization & readability
+    CHANGES
+    [-] const correctness in the server's use of ports
+    [-] The server now relies more on ClientInfo than the raw file descriptors
+
 # 0.4.1 - Bug fixes & Input improvements
 
     BUG FIXES
